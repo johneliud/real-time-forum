@@ -15,6 +15,7 @@ func main() {
 	http.Handle("/frontend/", http.StripPrefix("/frontend/", fs))
 
 	http.HandleFunc("/sign-up", controller.SignupHandler)
+	http.HandleFunc("/sign-in", controller.SigninHandler)
 
 	fmt.Println("Server started at http://localhost:8080")
 	http.ListenAndServe(":8080", nil)
