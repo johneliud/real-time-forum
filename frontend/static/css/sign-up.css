@@ -6,7 +6,7 @@ body {
 }
 
 .form-container {
-  min-width: 350px;
+  width: 400px;
   background-color: var(--text-color);
   padding: 2rem;
   border-radius: 0.75rem;
@@ -50,9 +50,15 @@ input {
   padding: 0.75rem;
   margin-top: 0.5rem;
   border: 0;
+  background-color: rgba(0, 0, 0, 0.1);
   outline: 0;
   border-radius: 0.25rem;
-  box-shadow: var(--light-box-shadow);
+  /* box-shadow:inset var(--light-box-shadow); */
+}
+
+body.dark-theme input {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--text-color);
 }
 
 .line {
@@ -66,6 +72,7 @@ input {
   background-color: var(--utility-color);
   color: var(--text-color);
   font-weight: bold;
+  font-size: 1rem;
   padding: 0.75rem;
   border: none;
   border-radius: 4px;
@@ -78,4 +85,13 @@ input {
   margin-top: 1rem;
   color: var(--utility-color);
   font-weight: bold;
+}
+
+.switch-form {
+  margin-top: 1rem;
+  /* transition: background-color var(--transition); */
+}
+
+body.dark-theme .switch-form a {
+  color: var(--utility-color);
 }
