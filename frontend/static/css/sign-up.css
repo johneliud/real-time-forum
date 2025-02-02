@@ -7,12 +7,17 @@ body {
 
 .form-container {
   min-width: 350px;
-  background: var(--text-color);
+  background-color: var(--text-color);
   padding: 2rem;
-  border-radius: .75rem;
+  border-radius: 0.75rem;
   box-shadow: var(--light-box-shadow);
   text-align: center;
   transition: var(--transition);
+}
+
+body.dark-theme .form-container {
+  background: var(--dark-bg-color);
+  box-shadow: var(--dark-box-shadow);
 }
 
 .form-container h2 {
@@ -36,28 +41,32 @@ label {
   font-weight: bold;
 }
 
+body.dark-theme label {
+  color: var(--text-color);
+}
+
 input {
   width: 100%;
-  padding: .75rem;
-  margin-top: .5rem;
+  padding: 0.75rem;
+  margin-top: 0.5rem;
   border: 0;
   outline: 0;
-  border-radius: .25rem;
+  border-radius: 0.25rem;
   box-shadow: var(--light-box-shadow);
 }
 
 .line {
   width: 50%;
-  height: .75px;
+  height: 0.75px;
   margin: 0 auto 1rem;
   background-color: rgb(150, 150, 150);
 }
 
 .btn {
-  background: var(--utility-color);
+  background-color: var(--utility-color);
   color: var(--text-color);
   font-weight: bold;
-  padding: .75rem;
+  padding: 0.75rem;
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -65,13 +74,8 @@ input {
 }
 
 .success-message {
-  /* display: none; */
+  display: none;
   margin-top: 1rem;
   color: var(--utility-color);
   font-weight: bold;
-}
-
-body.dark-theme .form-container {
-  background: var(--dark-bg-color);
-  box-shadow: var(--dark-box-shadow);
 }
