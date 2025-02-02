@@ -19,11 +19,21 @@
 
         <div class="theme-toggler">
           <span class="tooltip-text">Toggle Mode</span>
-          <box-icon class="sun" name='sun'></box-icon>
-          <box-icon class="moon" name='moon' ></box-icon>
+          <box-icon class="sun" name="sun"></box-icon>
+          <box-icon class="moon" name="moon"></box-icon>
         </div>
       </nav>
     </header>
+
+    <main>
+      <div class="error-container">
+        <div class="error-details">
+          <p class="status-code">{{ .StatusCode }}</p>
+          <p class="message">{{ .Message }}</p>
+        </div>
+        <a href="/">Back To Homepage</a>
+      </div>
+    </main>
 
     <!-- Boxicons -->
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
