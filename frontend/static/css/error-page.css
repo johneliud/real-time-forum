@@ -1,0 +1,45 @@
+body {
+  display: grid;
+  place-items: center;
+}
+
+.error-container {
+  height: 50vh;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: column;
+  text-align: center;
+}
+
+.error-details {
+  height: 20vh;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: column;
+}
+
+.error-details .status-code {
+  color: var(--utility-color);
+  font-weight: bold;
+  font-size: 2.5rem;
+}
+
+.error-details .message {
+  font-size: 1.5rem;
+}
+
+.error-container a {
+  text-decoration: none;
+  background-color: var(--primary-color);
+  padding: .5rem 1.5rem;
+  color: var(--text-color);
+  font-weight: bold;
+  border-radius: 2rem;
+  transition: background-color var(--transition);
+}
+
+.error-container a:hover {
+  background-color: var(--utility-color);
+}

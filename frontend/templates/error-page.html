@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" href="/frontend/static/css/style.css" />
+    <link rel="stylesheet" href="/frontend/static/css/error-page.css" />
+    <script defer src="/frontend/static/js/script.js"></script>
+
+    <title>{{ .StatusCode }}</title>
+  </head>
+  <body>
+    <header>
+      <nav class="navbar">
+        <div class="logo">
+          <a href="/">Forum</a>
+        </div>
+
+        <div class="theme-toggler">
+          <span class="tooltip-text">Toggle Mode</span>
+          <box-icon class="sun" name="sun"></box-icon>
+          <box-icon class="moon" name="moon"></box-icon>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <div class="error-container">
+        <div class="error-details">
+          <p class="status-code">{{ .StatusCode }}</p>
+          <p class="message">{{ .Message }}</p>
+        </div>
+        <a href="/">Back To Homepage</a>
+      </div>
+    </main>
+
+    <!-- Boxicons -->
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+  </body>
+</html>
