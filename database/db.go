@@ -12,23 +12,29 @@ var DB *sql.DB
 func InitDB() {
 	var err error
 
-	db, err := sql.Open("sqlite3", "forum.db")
+	DB, err = sql.Open("sqlite3", "./forum.db")
 	if err != nil {
 		log.Printf("Failed to open database: %v\n", err)
 		return
 	}
 
+	if err = DB.Ping(); err != nil {
+		log.Printf("Database connection failed: %v", err)
+		return
+	}
+
 	query := `CREATE TABLE IF NOT EXISTS users (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		username TEXT UNIQUE NOT NULL,
+		name TEXT UNIQUE NOT NULL,
 		email TEXT UNIQUE NOT NULL,
 		password TEXT NOT NULL,
 		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 	);`
 
-	_, err = db.Exec(query)
+	_, err = DB.Exec(query)
 	if err != nil {
 		log.Printf("Failed executing query: %v\n", err)
 		return
 	}
+	log.Println("Database initialized successfully")
 }
