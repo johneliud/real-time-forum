@@ -3,5 +3,13 @@ CREATE TABLE users (
     name TEXT UNIQUE NOT NULL,
     email TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
+    session_token TEXT UNIQUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS sessions (
+    user_id INTEGER PRIMARY KEY,
+    session_token TEXT UNIQUE NOT NULL,
+    expires_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
 );
