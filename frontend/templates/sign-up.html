@@ -28,10 +28,10 @@
     <main>
       <div class="form-container">
         <h2>Sign Up</h2>
-        <form id="signup-form">
+        <form action="/sign-up" method="POST" id="signup-form">
           <div class="input-group">
-            <label for="fullname">Full Name</label>
-            <input type="text" id="fullname" name="fullname" required />
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" required />
           </div>
 
           <div class="input-group">
@@ -45,11 +45,11 @@
           </div>
 
           <div class="input-group">
-            <label for="confirm-password">Confirm Password</label>
+            <label for="confirmed-password">Confirm Password</label>
             <input
               type="password"
-              id="confirm-password"
-              name="confirm-password"
+              id="confirmed-password"
+              name="confirmed-password"
               required
             />
           </div>
