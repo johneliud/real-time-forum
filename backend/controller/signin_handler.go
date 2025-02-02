@@ -2,18 +2,21 @@ package controller
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
 	"strings"
 	"text/template"
+	"time"
 
+	"github.com/johneliud/forum/backend/util"
 	"github.com/johneliud/forum/database"
 	"golang.org/x/crypto/bcrypt"
 )
 
 /*
 SigninHandler function handles the sign in logic by validating if a user exists in the database.
-*/ 
+*/
 func SigninHandler(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/sign-in" {
 		log.Printf("Failed to find path %q\n", r.URL.Path)
@@ -51,15 +54,19 @@ func SigninHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		var hashedPassword string
+		var (
+			userID                               int
+			hashedPassword, existingSessionToken string
+		)
 
 		// Check user existance in the db
-		err := database.DB.QueryRow("SELECT password FROM users WHERE email = ?", email).Scan(&hashedPassword)
-		if err == sql.ErrNoRows {
-			log.Printf("Invalid credentials. No user found: %v\n", err)
-			ErrorHandler(w, "Unauthorized User", http.StatusUnauthorized)
-			return
-		} else if err != nil {
+		err := database.DB.QueryRow("SELECT id, password, session_token FROM users WHERE email = ?", email).Scan(&userID, &hashedPassword, &existingSessionToken)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				log.Printf("Invalid credentials. No user found: %v\n", err)
+				ErrorHandler(w, "Unauthorized User", http.StatusUnauthorized)
+				return
+			}
 			log.Printf("Failed quering database row: %v\n", err)
 			ErrorHandler(w, "Something Unexpected Happened. Try Again Later", http.StatusInternalServerError)
 			return
@@ -71,6 +78,31 @@ func SigninHandler(w http.ResponseWriter, r *http.Request) {
 			ErrorHandler(w, "Unauthorized User", http.StatusUnauthorized)
 			return
 		}
+
+		// Generate new session token
+		sessionToken, err := util.GenerateSessionToken()
+		if err != nil {
+			log.Printf("Failed to generate session token: %v\n", err)
+			ErrorHandler(w, "Something Unexpected Happened. Try Again Later", http.StatusInternalServerError)
+			return
+		}
+
+		// Store new session token and remove the old one
+		_, err = database.DB.Exec("UPDATE users SET session_token = ? WHERE id = ?", sessionToken, userID)
+		if err != nil {
+			fmt.Printf("Failed updating session token: %v\n", err)
+			ErrorHandler(w, "Something Unexpected Happened. Try Again Later", http.StatusInternalServerError)
+			return
+		}
+
+		http.SetCookie(w, &http.Cookie{
+			Name:     "session_token",
+			Value:    sessionToken,
+			Path:     "/",
+			HttpOnly: true,
+			Secure:   false,
+			Expires:  time.Now().Add(24 * time.Hour),
+		})
 
 		http.Redirect(w, r, "/home", http.StatusSeeOther)
 	default:
