@@ -9,6 +9,9 @@ import (
 
 var DB *sql.DB
 
+/*
+InitDB installs the neccessary drivers and environment required to run the database.
+*/
 func InitDB() {
 	var err error
 
