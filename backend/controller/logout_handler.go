@@ -26,10 +26,12 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.SetCookie(w, &http.Cookie{
-		Name:   "session_token",
-		Value:  "",
-		Path:   "/",
-		MaxAge: -1,
+		Name:     "session_token",
+		Value:    "",
+		HttpOnly: true,
+		Secure:   true,
+		Path:     "/",
+		MaxAge:   -1,
 	})
 
 	http.Redirect(w, r, "/sign-in", http.StatusSeeOther)
