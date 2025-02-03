@@ -61,6 +61,14 @@ body.dark-theme input {
   color: var(--text-color);
 }
 
+.password {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  column-gap: 1rem;
+}
+
 .line {
   width: 50%;
   height: 0.75px;

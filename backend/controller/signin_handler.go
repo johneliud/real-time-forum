@@ -6,14 +6,16 @@ import (
 	"net/http"
 	"strings"
 	"text/template"
+	"time"
 
+	"github.com/google/uuid"
 	"github.com/johneliud/forum/database"
 	"golang.org/x/crypto/bcrypt"
 )
 
 /*
 SigninHandler function handles the sign in logic by validating if a user exists in the database.
-*/ 
+*/
 func SigninHandler(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/sign-in" {
 		log.Printf("Failed to find path %q\n", r.URL.Path)
@@ -51,10 +53,14 @@ func SigninHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		var hashedPassword string
+		var (
+			userID       int
+			storedHash   string
+			sessionToken sql.NullString
+		)
 
 		// Check user existance in the db
-		err := database.DB.QueryRow("SELECT password FROM users WHERE email = ?", email).Scan(&hashedPassword)
+		err := database.DB.QueryRow("SELECT id, password, session_token FROM users WHERE email = ?", email).Scan(&userID, &storedHash, &sessionToken)
 		if err == sql.ErrNoRows {
 			log.Printf("Invalid credentials. No user found: %v\n", err)
 			ErrorHandler(w, "Unauthorized User", http.StatusUnauthorized)
@@ -66,13 +72,31 @@ func SigninHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Compare hashed password
-		if err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password)); err != nil {
+		if err := bcrypt.CompareHashAndPassword([]byte(storedHash), []byte(password)); err != nil {
 			log.Printf("Invalid credentials: %v\n", err)
 			ErrorHandler(w, "Unauthorized User", http.StatusUnauthorized)
 			return
 		}
 
-		http.Redirect(w, r, "/home", http.StatusSeeOther)
+		newSessionToken := uuid.New().String()
+
+		_, err = database.DB.Exec("UPDATE users SET session_token = ? WHERE id = ?", newSessionToken, userID)
+		if err != nil {
+			log.Printf("Failed to update session token: %v\n", err)
+			ErrorHandler(w, "Something Unexpected Happened. Try Again Later", http.StatusInternalServerError)
+			return
+		}
+
+		http.SetCookie(w, &http.Cookie{
+			Name:     "session_token",
+			Value:    newSessionToken,
+			Path:     "/",
+			HttpOnly: true,
+			Secure:   true,
+			Expires:  time.Now().Add(24 * time.Hour),
+		})
+
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 	default:
 		log.Println("Invalid request method")
 		ErrorHandler(w, "Method Not Allowed", http.StatusMethodNotAllowed)
