@@ -23,13 +23,12 @@ func AuthenticateMiddleware(next http.Handler) http.Handler {
 
 		var userID int
 		err = database.DB.QueryRow("SELECT id FROM users WHERE session_token = ?", cookie.Value).Scan(&userID)
-		if err != nil {
-			if err == sql.ErrNoRows {
-				log.Println("Redirecting to '/sign-in'")
-				http.Redirect(w, r, "/sign-in", http.StatusSeeOther)
-				return
-			}
-			log.Printf("Database error: %v\n", err)
+		if err == sql.ErrNoRows {
+			log.Println("Redirecting to '/sign-in'")
+			http.Redirect(w, r, "/sign-in", http.StatusSeeOther)
+			return
+		} else if err != nil {
+			log.Printf("Error checking session: %v\n", err)
 			controller.ErrorHandler(w, "Something Unexpected Happened. Try Again Later", http.StatusInternalServerError)
 			return
 		}
