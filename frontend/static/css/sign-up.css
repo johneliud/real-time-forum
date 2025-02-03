@@ -1,8 +1,8 @@
 body {
   display: flex;
   align-items: center;
-  justify-content: center;
   flex-direction: column;
+  justify-content: center;
 }
 
 .form-container {
@@ -80,11 +80,16 @@ body.dark-theme input {
   width: 100%;
 }
 
-.success-message {
+#success-message {
   display: none;
-  margin-top: 1rem;
-  color: var(--utility-color);
-  font-weight: bold;
+  position: absolute;
+  right: 1rem;
+  top: 5rem;
+  color: var(--text-color);
+  background-color: var(--utility-color);
+  padding: 1rem 2rem;
+  border-radius: .5rem;
+  transition: var(--transition);
 }
 
 .switch-form {
