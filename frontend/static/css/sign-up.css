@@ -96,8 +96,15 @@ body.dark-theme input {
   color: var(--text-color);
   background-color: var(--utility-color);
   padding: 1rem 2rem;
-  border-radius: .5rem;
+  border-radius: 0.5rem;
   transition: var(--transition);
+}
+
+.feedback-message {
+  font-weight: 500;
+  margin-top: 0.25rem;
+  font-size: 14px;
+  text-align: right;
 }
 
 .switch-form {
