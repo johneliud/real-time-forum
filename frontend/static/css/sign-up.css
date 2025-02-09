@@ -88,7 +88,7 @@ body.dark-theme input {
   width: 100%;
 }
 
-#success-message {
+.success-message {
   display: none;
   position: absolute;
   right: 1rem;
@@ -98,6 +98,10 @@ body.dark-theme input {
   padding: 1rem 2rem;
   border-radius: 0.5rem;
   transition: var(--transition);
+}
+
+.success-message.show-success {
+  display: block;
 }
 
 .feedback-message {

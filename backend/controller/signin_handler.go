@@ -2,6 +2,7 @@ package controller
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -47,9 +48,13 @@ func SigninHandler(w http.ResponseWriter, r *http.Request) {
 
 		email, password := r.FormValue("email"), r.FormValue("password")
 
-		if len(strings.TrimSpace(email)) == 0 || len(strings.TrimSpace(password)) == 0 {
-			log.Println("Failed validating form values")
-			ErrorHandler(w, "Bad Request", http.StatusBadRequest)
+		if len(strings.TrimSpace(email)) == 0 {
+			fmt.Println("Email value cannot be an empty string")
+			return
+		}
+
+		if len(strings.TrimSpace(password)) == 0 {
+			fmt.Println("Password value cannot be an empty string")
 			return
 		}
 
