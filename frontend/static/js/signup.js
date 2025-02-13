@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!/[a-z]/.test(password))
       return 'Include at least one lowercase letter.';
     if (!/[0-9]/.test(password)) return 'Include at least one number.';
-    if (!/[!@#$%^&*]/.test(password))
+    if (!/[!,.:;(){}?_@#$%^&*]/.test(password))
       return 'Include at least one special character.';
     return '';
   }
