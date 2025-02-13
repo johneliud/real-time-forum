@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!/[a-z]/.test(password))
       return 'Include at least one lowercase letter.';
     if (!/[0-9]/.test(password)) return 'Include at least one number.';
-    if (!/[!@#$%^&*]/.test(password))
+    if (!/[!,.:;(){}?_@#$%^&*]/.test(password))
       return 'Include at least one special character.';
     return '';
   }
@@ -107,8 +107,6 @@ document.addEventListener('DOMContentLoaded', () => {
 // Toggle password visibility
 document.querySelectorAll('.toggle-password-visibility').forEach((button) => {
   button.addEventListener('click', () => {
-    console.log("clicked");
-    
     const input = document.getElementById(button.dataset.target);
     if (input.type === 'password') {
       input.type = 'text';
