@@ -18,21 +18,21 @@ document
       successMessage.classList.add('show-success');
       setTimeout(() => {
         successMessage.classList.remove('show');
+        window.location.href = '/';
       }, 2000);
-      window.location.href = '/';
     } else {
       alert('Sign-in failed! Check your credentials.');
     }
   });
 
 // Toggle password visibility
-document.querySelectorAll('.toggle-password-visibility').forEach((button) => {
-  button.addEventListener('click', () => {
-    const input = document.getElementById(button.dataset.target);
-    if (input.type === 'password') {
-      input.type = 'text';
-    } else {
-      input.type = 'password';
-    }
-  });
+const button = document.querySelector('.toggle-password-visibility');
+
+button.addEventListener('click', () => {
+  const input = document.getElementById(button.dataset.target);
+  if (input.type === 'password') {
+    input.type = 'text';
+  } else {
+    input.type = 'password';
+  }
 });

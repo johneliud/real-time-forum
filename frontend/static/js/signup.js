@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Toggle password visibility
 document.querySelectorAll('.toggle-password-visibility').forEach((button) => {
-  button.addEventListener('click', () => {    
+  button.addEventListener('click', () => {
     const input = document.getElementById(button.dataset.target);
     if (input.type === 'password') {
       input.type = 'text';
