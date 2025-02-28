@@ -3,6 +3,7 @@ package auth
 import (
 	"crypto/rand"
 	"encoding/base64"
+	"errors"
 	"log"
 	"net/http"
 )
@@ -15,7 +16,7 @@ Generates a random 16-byte state cookie, encodes it in base64, sets the cookie i
 func generateStateCookie(w http.ResponseWriter) string {
 	b := make([]byte, 16)
 	if _, err := rand.Read(b); err != nil {
-		log.Printf("Error generating random state: %v", err)
+		log.Printf("Error generating random state: %v\n", err)
 		return ""
 	}
 
@@ -32,4 +33,22 @@ func generateStateCookie(w http.ResponseWriter) string {
 		SameSite: http.SameSiteLaxMode,
 	})
 	return state
+}
+
+/*
+Checks if the state query parameter in an HTTP request matches the value of the oauth_state cookie.
+*/
+func validateState(r *http.Request) error {
+	state := r.URL.Query().Get("state")
+	cookie, err := r.Cookie("oauth_state")
+	if err != nil {
+		log.Printf("Cookie error: %v\n", err)
+		return err
+	}
+
+	if cookie.Value != state {
+		log.Printf("State mismatch. Cookie: %s, State: %s\n", cookie.Value, state)
+		return errors.New("invalid state")
+	}
+	return nil
 }
