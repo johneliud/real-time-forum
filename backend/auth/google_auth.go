@@ -57,3 +57,30 @@ func getGoogleUser(token string) (*GoogleUser, error) {
 	json.NewDecoder(resp.Body).Decode(&user)
 	return &user, nil
 }
+
+/*
+Exchanges a Google authorization code for an access token. It sends a POST request to the Google Token URL.
+*/
+func exchangeGoogleToken(code string) (string, error) {
+	googleClientID, googleClientSecret := util.LoadCredentials()
+
+	data := url.Values{
+		"code":          {code},
+		"client_id":     {googleClientID},
+		"client_secret": {googleClientSecret},
+		"redirect_uri":  {REDIRECT_URL + "/auth/google/callback"},
+		"grant_type":    {"authorization_code"},
+	}
+
+	resp, err := http.PostForm(GOOGLE_TOKEN_URL, data)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+	
+	var result struct {
+		AccessToken string `json:"access_token"`
+	}
+	json.NewDecoder(resp.Body).Decode(&result)
+	return result.AccessToken, nil
+}
