@@ -7,3 +7,5 @@ uploads/
 tmp/
 
 .air.toml
+
+.env
