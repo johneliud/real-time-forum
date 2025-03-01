@@ -1,12 +1,16 @@
 package auth
 
 import (
+	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"net/url"
 
 	"github.com/johneliud/forum/backend/util"
+	"github.com/johneliud/forum/database"
 )
 
 const (
@@ -16,7 +20,7 @@ const (
 )
 
 type GoogleUser struct {
-	Name, Email string
+	Name, Email, Sub string
 }
 
 /*
@@ -37,6 +41,92 @@ func GoogleAuth(w http.ResponseWriter, r *http.Request) {
 	)
 	w.Header().Set("Access-Control-Allow-Origin", REDIRECT_URL)
 	http.Redirect(w, r, redirectURL, http.StatusTemporaryRedirect)
+}
+
+/*
+Google OAuth 2.0 callback handler called after a user grants access to their Google account. The function:
+
+1. Validates the state parameter to prevent CSRF attacks.
+2. Exchanges the authorization code for an access token.
+3. Retrieves the user's information using the access token.
+4. Checks if the user already exists in the database and creates a new user if not.
+5. Redirects the user to the  page, indicating whether they're a new or returning user.
+*/
+func GoogleCallback(w http.ResponseWriter, r *http.Request) {
+	if err := validateState(r); err != nil {
+		log.Printf("State validation failed: %v", err)
+		http.Redirect(w, r, "/sign-in?error=invalid_state", http.StatusTemporaryRedirect)
+		return
+	}
+
+	code := r.URL.Query().Get("code")
+	token, err := exchangeGoogleToken(code)
+	if err != nil {
+		log.Printf("Token exchange failed: %v\n", err)
+		http.Redirect(w, r, "/sign-in?error=token_exchange_failed", http.StatusTemporaryRedirect)
+		return
+	}
+
+	user, err := getGoogleUser(token)
+	if err != nil {
+		log.Printf("Failed to get user info: %v\n", err)
+		http.Redirect(w, r, "/sign-in?error=user_info_failed", http.StatusTemporaryRedirect)
+		return
+	}
+
+	var (
+		userID       int
+		authProvider string
+	)
+
+	err = database.DB.QueryRow("SELECT id, auth_provider FROM tblUsers WHERE email = ?", user.Email).Scan(&userID, &authProvider)
+	// Email exists but has a different oauth provider
+	if err == nil && authProvider != "google" {
+		log.Printf("Email already registered with %s: %v", authProvider, user.Email)
+		http.Redirect(w, r, "/sign-in?error=email_exists&provider="+authProvider, http.StatusTemporaryRedirect)
+		return
+	}
+
+	isNewUser := false
+	// Create a new user if not existing
+	if errors.Is(err, sql.ErrNoRows) {
+		var count int
+		err = database.DB.QueryRow("SELECT COUNT(*) FROM tblUsers WHERE username = ?", user.Name).Scan(&count)
+		if err != nil {
+			log.Printf("Database error checking username: %v", err)
+			http.Redirect(w, r, "/sign-in?error=database_error", http.StatusTemporaryRedirect)
+			return
+		}
+
+		if count > 0 {
+			// Append a random suffix if a username is taken
+			user.Name = fmt.Sprintf("%s_%s", user.Name, user.Sub[:6])
+		}
+
+		// Create new user
+		result, err := database.DB.Exec(
+			"INSERT INTO tblUsers(username, email, auth_provider) VALUES(?, ?, ?)",
+			user.Name, user.Email, "google",
+		)
+		if err != nil {
+			log.Printf("User creation failed: %v", err)
+			http.Redirect(w, r, "/sign-in?error=user_creation_failed", http.StatusTemporaryRedirect)
+			return
+		}
+		id, _ := result.LastInsertId()
+		userID = int(id)
+		isNewUser = true
+	} else if err != nil {
+		log.Printf("Database error: %v", err)
+		http.Redirect(w, r, "/sign-in?error=database_error", http.StatusTemporaryRedirect)
+		return
+	}
+
+	if isNewUser {
+		http.Redirect(w, r, "/?status=new_user", http.StatusSeeOther)
+	} else {
+		http.Redirect(w, r, "/?status=returning_user", http.StatusSeeOther)
+	}
 }
 
 /*
@@ -77,7 +167,7 @@ func exchangeGoogleToken(code string) (string, error) {
 		return "", err
 	}
 	defer resp.Body.Close()
-	
+
 	var result struct {
 		AccessToken string `json:"access_token"`
 	}
