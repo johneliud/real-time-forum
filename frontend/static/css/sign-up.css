@@ -115,6 +115,10 @@ body.dark-theme input {
   width: 100%;
 }
 
+.btn:hover {
+  opacity: 0.8;
+}
+
 .success-message {
   display: none;
   position: absolute;
