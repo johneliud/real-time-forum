@@ -6,7 +6,7 @@ body {
 }
 
 .form-container {
-  width: 400px;
+  width: 50%;
   background-color: var(--text-color);
   padding: 2rem;
   border-radius: 0.75rem;
@@ -136,6 +136,43 @@ body.dark-theme input {
   margin-top: 0.25rem;
   font-size: 14px;
   text-align: right;
+}
+
+.oauth-buttons {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  margin: 15px auto 0;
+}
+
+.oauth-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: left;
+  column-gap: 10px;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color var(--transition);
+}
+
+.oauth-btn.google-btn {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.oauth-btn.google-btn box-icon {
+  fill: white;
+}
+
+.oauth-btn:hover {
+  opacity: 0.8;
 }
 
 .switch-form {
