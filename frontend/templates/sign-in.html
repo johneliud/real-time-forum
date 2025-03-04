@@ -24,12 +24,12 @@
     </header>
 
     <main>
-      <p class="success-message" id="success-message">Sign In Successful!</p>
+      <p class="message-popup" id="message-popup"></p>
       <div class="form-container">
         <h2>Sign In</h2>
         <form action="/sign-in" id="signin-form" method="POST">
           <div class="input-group">
-            <label for="email">Email</label>
+            <label for="email">Email or Nickname</label>
             <input type="email" id="email" name="email" required />
           </div>
 
@@ -37,7 +37,11 @@
             <label for="password">Password</label>
             <div class="password-wrapper">
               <input type="password" id="password" name="password" required />
-              <button type="button" class="toggle-password-visibility" data-target="password">
+              <button
+                type="button"
+                class="toggle-password-visibility"
+                data-target="password"
+              >
                 <box-icon name="show"></box-icon>
               </button>
             </div>
@@ -46,6 +50,22 @@
           <div class="line"></div>
           <button type="submit" class="sign-in-btn btn">Sign In</button>
         </form>
+
+        <br />
+
+        <p>Or Continue With</p>
+
+        <div class="oauth-buttons">
+          <button
+            type="button"
+            class="oauth-btn google-btn"
+            onclick="window.location.href='/auth/google'"
+          >
+            <box-icon style="fill: white" type="logo" name="google"></box-icon>
+            Google
+          </button>
+        </div>
+        
         <p class="switch-form">
           Don't have an account? <a href="/sign-up">Sign Up</a>
         </p>
