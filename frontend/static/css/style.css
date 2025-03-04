@@ -70,6 +70,39 @@ body.dark-theme .logo a {
   color: var(--text-color);
 }
 
+.navbar .hamburger-menu {
+  width: 40px;
+  height: 25px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  position: relative;
+}
+
+.hamburger-menu .bar {
+  width: 85%;
+  height: 4px;
+  background-color: var(--dark-bg-color);
+  transition: 0.4s;
+}
+
+body.dark-theme .hamburger-menu .bar {
+  background-color: var(--text-color);
+}
+
+.hamburger.active .bar:nth-child(1) {
+  transform: translateY(10px) rotate(45deg);
+}
+
+.hamburger.active .bar:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger.active .bar:nth-child(3) {
+  transform: translateY(-10px) rotate(-45deg);
+}
+
 .navbar .theme-toggler {
   display: flex;
   align-items: center;
