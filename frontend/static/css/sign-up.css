@@ -188,3 +188,7 @@ select {
 .switch-form {
   margin-top: 1rem;
 }
+
+body.dark-theme .switch-form a {
+  color: var(--text-color);
+}
