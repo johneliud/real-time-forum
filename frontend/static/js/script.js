@@ -1,3 +1,10 @@
+const hamburgerMenu = document.querySelector('.hamburger-menu');
+hamburgerMenu.addEventListener('click', () => {
+  console.log('Clicked');
+
+  hamburgerMenu.classList.toggle('active');
+});
+
 const applyTheme = (theme) => {
   if (theme === 'dark') {
     document.body.classList.add('dark-theme');
