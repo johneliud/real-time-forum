@@ -36,12 +36,23 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const hamburgerMenu = document.querySelector('.hamburger-menu');
-  const menuContent = document.querySelector(".menu-content");
+  const menuContent = document.querySelector('.menu-content');
 
   if (hamburgerMenu) {
     hamburgerMenu.addEventListener('click', () => {
       hamburgerMenu.classList.toggle('active');
-      menuContent.style.display = menuContent.style.display === "block" ? "none" : "block";
+      menuContent.style.display =
+        menuContent.style.display === 'block' ? 'none' : 'block';
+    });
+
+    document.addEventListener('click', function (event) {
+      if (
+        !hamburgerMenu.contains(event.target) &&
+        !menuContent.contains(event.target)
+      ) {
+        menuContent.style.display = 'none';
+        hamburgerMenu.classList.remove('active');
+      }
     });
   }
 });
