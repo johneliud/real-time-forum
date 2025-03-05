@@ -2,23 +2,19 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/johneliud/forum/backend/routes"
 	"github.com/johneliud/forum/backend/util"
 	"github.com/johneliud/forum/database"
-	"github.com/joho/godotenv"
 )
 
 func main() {
-	err := godotenv.Load(".env")
+	err := util.LoadEnv(".env")
 	if err != nil {
-		log.Printf("Error loading .env: %v\n", err)
+		fmt.Println("Error loading .env file:", err)
 		return
 	}
-
-	util.LoadCredentials()
 
 	database.InitDB()
 
