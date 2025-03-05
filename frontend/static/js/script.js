@@ -1,43 +1,45 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener('DOMContentLoaded', () => {
   function applyTheme(theme) {
-    if (theme === "dark") {
-      document.body.classList.add("dark-theme");
+    if (theme === 'dark') {
+      document.body.classList.add('dark-theme');
     } else {
-      document.body.classList.remove("dark-theme");
+      document.body.classList.remove('dark-theme');
     }
   }
 
   function toggleTheme() {
-    let currentTheme = "";
-    let newTheme = "";
+    let currentTheme = '';
+    let newTheme = '';
 
-    if (document.body.classList.contains("dark-theme")) {
-      currentTheme = "dark";
+    if (document.body.classList.contains('dark-theme')) {
+      currentTheme = 'dark';
     } else {
-      currentTheme = "light";
+      currentTheme = 'light';
     }
 
-    if (currentTheme === "dark") {
-      newTheme = "light";
+    if (currentTheme === 'dark') {
+      newTheme = 'light';
     } else {
-      newTheme = "dark";
+      newTheme = 'dark';
     }
 
     applyTheme(newTheme);
-    localStorage.setItem("theme", newTheme);
+    localStorage.setItem('theme', newTheme);
   }
-  const savedTheme = localStorage.getItem("theme") || "light";
+  const savedTheme = localStorage.getItem('theme') || 'light';
   applyTheme(savedTheme);
 
-  document
-    .querySelector(".theme-toggler")
-    .addEventListener("click", toggleTheme);
+  const themeToggler = document.querySelector('.theme-toggler');
 
-  const hamburgerMenu = document.querySelector(".hamburger-menu");
+  if (themeToggler) {
+    themeToggler.addEventListener('click', toggleTheme);
+  }
+
+  const hamburgerMenu = document.querySelector('.hamburger-menu');
 
   if (hamburgerMenu) {
-    hamburgerMenu.addEventListener("click", () => {
-      document.querySelector(".hamburger-menu").classList.toggle("active");
+    hamburgerMenu.addEventListener('click', () => {
+      hamburgerMenu.classList.toggle('active');
     });
   }
 });
