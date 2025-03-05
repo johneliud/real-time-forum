@@ -105,13 +105,15 @@ body.dark-theme .hamburger-menu .bar {
 
 .navbar .theme-toggler,
 .navbar .user-profile,
-.navbar .settings {
+.navbar .settings,
+.navbar .log-out {
   display: flex;
   align-items: center;
   justify-content: left;
   column-gap: 0.5rem;
   cursor: pointer;
   font-size: 1rem;
+  font-weight: bold;
   transition: var(--transition);
 }
 
@@ -170,6 +172,7 @@ body.dark-theme .moon {
 
 body.dark-theme .menu-content {
   background-color: var(--dark-bg-color);
+  box-shadow: var(--dark-box-shadow);
 }
 
 body.dark-theme .menu-content box-icon {
@@ -179,12 +182,21 @@ body.dark-theme .menu-content box-icon {
 
 .theme-toggler,
 .user-profile,
-.settings {
+.settings,
+.log-out {
   margin: 10px 0;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  min-height: 7.5vh;
+  border-bottom: 1px solid var(--dark-bg-color);
+}
+
+body.dark-theme .theme-toggler,
+body.dark-theme .user-profile,
+body.dark-theme .settings {
+  border-bottom: 1px solid var(--text-color);
 }
 
 main {
