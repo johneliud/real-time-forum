@@ -1,6 +1,10 @@
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT UNIQUE NOT NULL,
+    first_name TEXT UNIQUE NOT NULL,
+    last_name TEXT UNIQUE NOT NULL,
+    nick_name TEXT UNIQUE NOT NULL,
+    gender TEXT UNIQUE NOT NULL,
+    age INTEGER NOT NULL,
     email TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
     session_token TEXT UNIQUE,
