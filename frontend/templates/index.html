@@ -5,52 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <link rel="stylesheet" href="/frontend/static/css/style.css" />
-    <script defer src="/frontend/static/js/script.js"></script>
-
-    <title>Home</title>
+    <id id="dynamic-styles"></id>
+    <title>Real Time Forum</title>
   </head>
   <body>
-    <header>
-      <nav class="navbar">
-        <div class="logo"><a href="/">Real Time Forum</a></div>
-
-        <div class="hamburger-menu">
-          <div class="bar"></div>
-          <div class="bar"></div>
-          <div class="bar"></div>
-        </div>
-
-        <div class="menu-content">
-          <div class="theme-toggler">
-            <span class="tooltip-text">Toggle Mode</span>
-            <box-icon class="sun" name="sun"></box-icon>
-            <box-icon class="moon" name="moon"></box-icon>
-          </div>
-
-          <div class="user-profile">
-            <box-icon name='user-circle'></box-icon>
-            <p>Profile</p>
-          </div>
-
-          <div class="settings">
-            <box-icon name='cog'  ></box-icon>
-            <p>Settings</p>
-          </div>
-
-          <div class="log-out">
-            <box-icon name='log-out'></box-icon>
-            <p>Log Out</p>
-          </div>
-        </div>
-      </nav>
-    </header>
-
     <main>
-      <div class="container">
-        <h1>Welcome Home</h1>
-      </div>
+      <div id="app"></div>
     </main>
 
+    <script src="/frontend/static/js/app.js" type="module"></script>
     <!-- Boxicons -->
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
   </body>
