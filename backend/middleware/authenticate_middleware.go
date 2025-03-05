@@ -16,16 +16,16 @@ func AuthenticateMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		cookie, err := r.Cookie("session_token")
 		if err != nil {
-			log.Println("Redirecting to '/sign-in'")
-			http.Redirect(w, r, "/sign-in", http.StatusSeeOther)
+			// log.Println("Redirecting to '/sign-in'")
+			// http.Redirect(w, r, "/sign-in", http.StatusSeeOther)
 			return
 		}
 
 		var userID int
 		err = database.DB.QueryRow("SELECT id FROM users WHERE session_token = ?", cookie.Value).Scan(&userID)
 		if err == sql.ErrNoRows {
-			log.Println("Redirecting to '/sign-in'")
-			http.Redirect(w, r, "/sign-in", http.StatusSeeOther)
+			// log.Println("Redirecting to '/sign-in'")
+			// http.Redirect(w, r, "/sign-in", http.StatusSeeOther)
 			return
 		} else if err != nil {
 			log.Printf("Error checking session: %v\n", err)
