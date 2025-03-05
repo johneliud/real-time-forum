@@ -1,4 +1,4 @@
-module github.com/johneliud/forum
+module github.com/johneliud/real-time-forum
 
 go 1.23.4
 

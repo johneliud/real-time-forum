@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/johneliud/forum/backend/util"
+	"github.com/johneliud/real-time-forum/backend/util"
 )
 
 const (
@@ -77,7 +77,7 @@ func exchangeGoogleToken(code string) (string, error) {
 		return "", err
 	}
 	defer resp.Body.Close()
-	
+
 	var result struct {
 		AccessToken string `json:"access_token"`
 	}

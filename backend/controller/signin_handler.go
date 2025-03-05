@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/johneliud/forum/database"
+	"github.com/johneliud/real-time-forum/database"
 	"golang.org/x/crypto/bcrypt"
 )
 

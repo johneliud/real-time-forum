@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/johneliud/forum/backend/routes"
-	"github.com/johneliud/forum/backend/util"
-	"github.com/johneliud/forum/database"
+	"github.com/johneliud/real-time-forum/backend/routes"
+	"github.com/johneliud/real-time-forum/backend/util"
+	"github.com/johneliud/real-time-forum/database"
 )
 
 func main() {

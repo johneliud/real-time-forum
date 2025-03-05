@@ -5,8 +5,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/johneliud/forum/backend/controller"
-	"github.com/johneliud/forum/database"
+	"github.com/johneliud/real-time-forum/backend/controller"
+	"github.com/johneliud/real-time-forum/database"
 )
 
 /*

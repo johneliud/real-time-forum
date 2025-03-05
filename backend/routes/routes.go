@@ -3,8 +3,8 @@ package routes
 import (
 	"net/http"
 
-	"github.com/johneliud/forum/backend/controller"
-	"github.com/johneliud/forum/backend/middleware"
+	"github.com/johneliud/real-time-forum/backend/controller"
+	"github.com/johneliud/real-time-forum/backend/middleware"
 )
 
 func Routes() {

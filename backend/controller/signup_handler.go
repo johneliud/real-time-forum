@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"text/template"
 
-	"github.com/johneliud/forum/backend/util"
-	"github.com/johneliud/forum/database"
+	"github.com/johneliud/real-time-forum/backend/util"
+	"github.com/johneliud/real-time-forum/database"
 )
 
 /*
