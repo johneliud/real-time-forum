@@ -26,7 +26,7 @@
       <p class="message-popup" id="message-popup"></p>
       <div class="form-container">
         <h2>Sign Up</h2>
-        <form action="/sign-up" method="POST" id="signup-form">
+        <form id="signup-form" novalidate>
           <div class="user-names">
             <div class="input-group">
               <label for="first-name">First Name</label>
@@ -56,7 +56,14 @@
 
             <div class="input-group">
               <label for="age">Age</label>
-              <input type="number" id="age" name="age" required />
+              <input
+                type="number"
+                id="age"
+                name="age"
+                required
+                min="13"
+                max="120"
+              />
             </div>
           </div>
 
@@ -102,21 +109,6 @@
 
           <button type="submit" class="sign-up-btn btn">Create Account</button>
         </form>
-
-        <br />
-
-        <p>Or Continue With</p>
-
-        <div class="oauth-buttons">
-          <button
-            type="button"
-            class="oauth-btn google-btn"
-            onclick="window.location.href='/auth/google'"
-          >
-            <box-icon style="fill: white" type="logo" name="google"></box-icon>
-            Google
-          </button>
-        </div>
 
         <p class="switch-form">
           Already have an account? <a href="/sign-in">Sign In</a>
