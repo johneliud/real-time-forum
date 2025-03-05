@@ -21,7 +21,7 @@ body {
 }
 
 .error-details .status-code {
-  color: var(--utility-color);
+  color: var(--primary-color);
   font-weight: bold;
   font-size: 4rem;
 }
@@ -41,5 +41,5 @@ body {
 }
 
 .error-container a:hover {
-  background-color: var(--utility-color);
+  opacity: 0.8;
 }
