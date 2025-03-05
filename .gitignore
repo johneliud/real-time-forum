@@ -1,11 +1,5 @@
-go.sum
-
 forum.db
-
 uploads/
-
 tmp/
-
 .air.toml
-
 .env
