@@ -37,7 +37,7 @@ body.dark-theme {
 header,
 nav {
   width: 100%;
-  height: 60px;
+  height: 80px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -159,7 +159,7 @@ body.dark-theme .moon {
 .menu-content {
   display: none;
   position: absolute;
-  top: 60px;
+  top: 80px;
   right: 0;
   min-width: 25%;
   background: var(--text-color);
@@ -168,6 +168,7 @@ body.dark-theme .moon {
   row-gap: 2.5rem;
   border-radius: 5px;
   text-align: left;
+  transition: var(--transition);
 }
 
 body.dark-theme .menu-content {
@@ -206,5 +207,5 @@ main {
   align-items: center;
   justify-content: center;
   flex: 1;
-  padding-top: 80px;
+  padding-top: 100px;
 }
