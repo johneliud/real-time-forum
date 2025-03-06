@@ -1,16 +1,16 @@
 export function initSignup() {
-  const app = document.getElementById("app");
+  const app = document.getElementById('app');
 
   function createElement(tag, attributes = {}, children = []) {
     const element = document.createElement(tag);
 
     Object.entries(attributes).forEach(([key, value]) => {
-      if (key === "class") {
-        element.classList.add(...value.split(" "));
-      } else if (key.startsWith("data-")) {
+      if (key === 'class') {
+        element.classList.add(...value.split(' '));
+      } else if (key.startsWith('data-')) {
         element.dataset[
           key
-            .replace("data-", "")
+            .replace('data-', '')
             .replace(/-([a-z])/g, (g) => g[1].toUpperCase())
         ] = value;
       } else {
@@ -19,7 +19,7 @@ export function initSignup() {
     });
 
     children.forEach((child) => {
-      if (typeof child === "string") {
+      if (typeof child === 'string') {
         element.appendChild(document.createTextNode(child));
       } else {
         element.appendChild(child);
@@ -31,111 +31,111 @@ export function initSignup() {
 
   function createSignupForm() {
     const signupForm = createElement(
-      "form",
+      'form',
       {
-        id: "signup-form",
+        id: 'signup-form',
         novalidate: true,
       },
       [
         // First Name
-        createElement("div", { class: "input-group" }, [
-          createElement("label", { for: "first-name" }, ["First Name"]),
-          createElement("input", {
-            type: "text",
-            id: "first-name",
-            name: "first-name",
+        createElement('div', { class: 'input-group' }, [
+          createElement('label', { for: 'first-name' }, ['First Name']),
+          createElement('input', {
+            type: 'text',
+            id: 'first-name',
+            name: 'first-name',
             required: true,
           }),
         ]),
         // Last Name
-        createElement("div", { class: "input-group" }, [
-          createElement("label", { for: "last-name" }, ["Last Name"]),
-          createElement("input", {
-            type: "text",
-            id: "last-name",
-            name: "last-name",
+        createElement('div', { class: 'input-group' }, [
+          createElement('label', { for: 'last-name' }, ['Last Name']),
+          createElement('input', {
+            type: 'text',
+            id: 'last-name',
+            name: 'last-name',
             required: true,
           }),
         ]),
         // Nickname
-        createElement("div", { class: "input-group" }, [
-          createElement("label", { for: "nick-name" }, ["Nickname"]),
-          createElement("input", {
-            type: "text",
-            id: "nick-name",
-            name: "nick-name",
+        createElement('div', { class: 'input-group' }, [
+          createElement('label', { for: 'nick-name' }, ['Nickname']),
+          createElement('input', {
+            type: 'text',
+            id: 'nick-name',
+            name: 'nick-name',
             required: true,
           }),
         ]),
         // Gender
-        createElement("div", { class: "input-group" }, [
-          createElement("label", { for: "gender" }, ["Gender"]),
+        createElement('div', { class: 'input-group' }, [
+          createElement('label', { for: 'gender' }, ['Gender']),
           createElement(
-            "select",
+            'select',
             {
-              id: "gender",
-              name: "gender",
+              id: 'gender',
+              name: 'gender',
               required: true,
             },
             [
-              createElement("option", { value: "" }, ["Select Gender"]),
-              createElement("option", { value: "male" }, ["Male"]),
-              createElement("option", { value: "female" }, ["Female"]),
+              createElement('option', { value: '' }, ['Select Gender']),
+              createElement('option', { value: 'male' }, ['Male']),
+              createElement('option', { value: 'female' }, ['Female']),
             ]
           ),
         ]),
         // Age
-        createElement("div", { class: "input-group" }, [
-          createElement("label", { for: "age" }, ["Age"]),
-          createElement("input", {
-            type: "number",
-            id: "age",
-            name: "age",
+        createElement('div', { class: 'input-group' }, [
+          createElement('label', { for: 'age' }, ['Age']),
+          createElement('input', {
+            type: 'number',
+            id: 'age',
+            name: 'age',
             required: true,
-            min: "13",
-            max: "120",
+            min: '13',
+            max: '120',
           }),
         ]),
         // Email
-        createElement("div", { class: "input-group" }, [
-          createElement("label", { for: "email" }, ["Email"]),
-          createElement("input", {
-            type: "email",
-            id: "email",
-            name: "email",
+        createElement('div', { class: 'input-group' }, [
+          createElement('label', { for: 'email' }, ['Email']),
+          createElement('input', {
+            type: 'email',
+            id: 'email',
+            name: 'email',
             required: true,
           }),
         ]),
         // Password
-        createElement("div", { class: "input-group" }, [
-          createElement("label", { for: "password" }, ["Password"]),
-          createElement("input", {
-            type: "password",
-            id: "password",
-            name: "password",
+        createElement('div', { class: 'input-group' }, [
+          createElement('label', { for: 'password' }, ['Password']),
+          createElement('input', {
+            type: 'password',
+            id: 'password',
+            name: 'password',
             required: true,
           }),
         ]),
         // Confirm Password
-        createElement("div", { class: "input-group" }, [
-          createElement("label", { for: "confirmed-password" }, [
-            "Confirm Password",
+        createElement('div', { class: 'input-group' }, [
+          createElement('label', { for: 'confirmed-password' }, [
+            'Confirm Password',
           ]),
-          createElement("input", {
-            type: "password",
-            id: "confirmed-password",
-            name: "confirmed-password",
+          createElement('input', {
+            type: 'password',
+            id: 'confirmed-password',
+            name: 'confirmed-password',
             required: true,
           }),
         ]),
         // Submit Button
         createElement(
-          "button",
+          'button',
           {
-            type: "submit",
-            class: "sign-up-btn",
+            type: 'submit',
+            class: 'sign-up-btn',
           },
-          ["Create Account"]
+          ['Create Account']
         ),
       ]
     );
@@ -144,12 +144,12 @@ export function initSignup() {
   }
 
   function attachFormValidation() {
-    const form = document.getElementById("signup-form");
-    const messagePopup = document.createElement("div");
-    messagePopup.id = "message-popup";
+    const form = document.getElementById('signup-form');
+    const messagePopup = document.createElement('div');
+    messagePopup.id = 'message-popup';
     form.prepend(messagePopup);
 
-    form.addEventListener("submit", async (e) => {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
       // Basic form validation
@@ -161,21 +161,21 @@ export function initSignup() {
       // Prepare signup data
       const formData = new FormData(form);
       const signupData = {
-        firstName: formData.get("first-name"),
-        lastName: formData.get("last-name"),
-        nickName: formData.get("nick-name"),
-        gender: formData.get("gender"),
-        age: parseInt(formData.get("age"), 10),
-        email: formData.get("email"),
-        password: formData.get("password"),
-        confirmedPassword: formData.get("confirmed-password"),
+        firstName: formData.get('first-name'),
+        lastName: formData.get('last-name'),
+        nickName: formData.get('nick-name'),
+        gender: formData.get('gender'),
+        age: parseInt(formData.get('age'), 10),
+        email: formData.get('email'),
+        password: formData.get('password'),
+        confirmedPassword: formData.get('confirmed-password'),
       };
 
       try {
-        const response = await fetch("/sign-up", {
-          method: "POST",
+        const response = await fetch('/sign-up', {
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify(signupData),
         });
@@ -183,32 +183,32 @@ export function initSignup() {
         const result = await response.json();
 
         if (result.success) {
-          messagePopup.textContent = "Signup successful!";
-          messagePopup.style.color = "green";
+          messagePopup.textContent = 'Signup successful!';
+          messagePopup.style.color = 'green';
           // Optional: Redirect or clear form
           setTimeout(() => {
-            window.location.href = "/sign-in";
+            window.location.href = '/sign-in';
           }, 2000);
         } else {
-          messagePopup.textContent = result.message || "Signup failed";
-          messagePopup.style.color = "red";
+          messagePopup.textContent = result.message || 'Signup failed';
+          messagePopup.style.color = 'red';
         }
       } catch (error) {
-        console.error("Signup error:", error);
-        messagePopup.textContent = "An error occurred. Please try again.";
-        messagePopup.style.color = "red";
+        console.error('Signup error:', error);
+        messagePopup.textContent = 'An error occurred. Please try again.';
+        messagePopup.style.color = 'red';
       }
     });
   }
 
   // Render signup form
   function renderSignupPage() {
-    app.innerHTML = ""; // Clear existing content
+    app.innerHTML = ''; // Clear existing content
 
     const signupContainer = createElement(
-      "div",
-      { class: "signup-container" },
-      [createElement("h1", {}, ["Sign Up"]), createSignupForm()]
+      'div',
+      { class: 'signup-container' },
+      [createElement('h1', {}, ['Sign Up']), createSignupForm()]
     );
 
     app.appendChild(signupContainer);
