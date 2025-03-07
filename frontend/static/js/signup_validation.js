@@ -1,4 +1,4 @@
-function initSignupValidation() {
+export function initSignupValidation() {
   const signupForm = document.getElementById('signup-form');
   const messagePopup = document.getElementById('message-popup');
 
