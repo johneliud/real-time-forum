@@ -37,7 +37,7 @@ function initSignupValidation() {
 
     try {
       const response = await fetch(
-        `/validate?${field}=${encodeURIComponent(value)}`
+        `/api/validate?${field}=${encodeURIComponent(value)}`
       );
       const data = await response.json();
       return data.available;
@@ -136,7 +136,7 @@ function initSignupValidation() {
     };
 
     try {
-      const response = await fetch('/sign-up', {
+      const response = await fetch('/api/sign-up', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
