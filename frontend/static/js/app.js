@@ -1,3 +1,5 @@
+import { initSignupValidation } from "./signup_validation.js";
+
 document.addEventListener('DOMContentLoaded', () => {
   const router = new Router();
 
