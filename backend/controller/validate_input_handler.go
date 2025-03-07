@@ -14,7 +14,7 @@ import (
 ValidateInputHandler checks if a name or email already exists in the database.
 */
 func ValidateInputHandler(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/validate" {
+	if r.URL.Path != "/api/validate" {
 		log.Printf("Failed finding %q route.\n", r.URL.Path)
 		ErrorHandler(w, "Not Found", http.StatusNotFound)
 		return
@@ -32,12 +32,12 @@ func ValidateInputHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	name, email := strings.TrimSpace(r.FormValue("name")), strings.TrimSpace(r.FormValue("email"))
+	nickName, email := strings.TrimSpace(r.FormValue("nick-name")), strings.TrimSpace(r.FormValue("email"))
 	var query, value string
 
-	if name != "" {
-		query = "SELECT id FROM users WHERE name = ?"
-		value = name
+	if nickName != "" {
+		query = "SELECT id FROM users WHERE nick_name = ?"
+		value = nickName
 	} else if email != "" {
 		query = "SELECT id FROM users WHERE email = ?"
 		value = email
