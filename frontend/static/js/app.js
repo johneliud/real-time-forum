@@ -38,18 +38,26 @@ class Router {
   }
 
   async handleLocation() {
+    let app = document.getElementById('app');
+
+    if (!app) {
+      app = document.createElement('div');
+      app.id = 'app';
+      document.body.appendChild(app);
+    }
+
+    this.renderHeader();
     const path = window.location.pathname;
     const view = this.routes[path] || this.routes['/'];
-
-    const app = document.getElementById('app');
-    if (app) {
-      app.innerHTML = '';
-      this.renderHeader();
-      await view();
-    }
+    await view();
   }
 
   renderHeader() {
+    let existingHeader = document.querySelector('header');
+    if (existingHeader) {
+      existingHeader.remove();
+    }
+
     const header = document.createElement('header');
     header.innerHTML = `
         <nav class="navbar">
@@ -64,8 +72,9 @@ class Router {
     `;
 
     const app = document.getElementById('app');
-    if (app) {
-      document.body.insertBefore(header, app);
+
+    if (app && app.parentNode) {
+      app.parentNode.insertBefore(header, app);
     } else {
       document.body.appendChild(header);
     }
