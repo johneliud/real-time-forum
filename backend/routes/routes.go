@@ -11,10 +11,10 @@ func Routes() {
 	http.Handle("/frontend/", http.StripPrefix("/frontend/", fs))
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "./frontend/index.html")
+		http.ServeFile(w, r, "./frontend/templates/index.html")
 	})
 
-	http.HandleFunc("/sign-up", controller.SignupHandler)
-
-	http.HandleFunc("/validate", controller.ValidateInputHandler)
+	// API routes
+	http.HandleFunc("/api/sign-up", controller.SignupHandler)
+	http.HandleFunc("/api/validate", controller.ValidateInputHandler)
 }
