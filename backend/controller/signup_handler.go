@@ -56,11 +56,11 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Insert user into database
 	stmt, err := database.DB.Prepare(`
-		INSERT INTO users (
-			first_name, last_name, nick_name, 
-			gender, age, email, password
-		) VALUES (?, ?, ?, ?, ?, ?, ?)
-	`)
+        INSERT INTO users (
+            first_name, last_name, nick_name, 
+            gender, age, email, password
+        ) VALUES (?, ?, ?, ?, ?, ?, ?)
+    `)
 	if err != nil {
 		respondWithError(w, "Database preparation failed", http.StatusInternalServerError)
 		return
