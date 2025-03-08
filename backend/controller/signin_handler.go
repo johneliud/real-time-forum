@@ -2,109 +2,113 @@ package controller
 
 import (
 	"database/sql"
-	"fmt"
-	"log"
+	"encoding/json"
 	"net/http"
-	"strings"
-	"text/template"
-	"time"
 
-	"github.com/google/uuid"
+	"github.com/johneliud/real-time-forum/backend/logger"
+	"github.com/johneliud/real-time-forum/backend/model"
+	"github.com/johneliud/real-time-forum/backend/util"
 	"github.com/johneliud/real-time-forum/database"
 	"golang.org/x/crypto/bcrypt"
 )
 
-/*
-SigninHandler function handles the sign in logic by validating if a user exists in the database.
-*/
+type SigninResponse struct {
+	Success bool   `json:"success"`
+	Message string `json:"message"`
+}
+
+type SigninRequest struct {
+	Identifier string `json:"identifier"`
+	Password   string `json:"password"`
+}
+
 func SigninHandler(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/sign-in" {
-		log.Printf("Failed to find path %q\n", r.URL.Path)
-		ErrorHandler(w, "Not Found", http.StatusNotFound)
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+
+	if r.Method == http.MethodOptions {
+		w.WriteHeader(http.StatusOK)
 		return
 	}
 
-	switch r.Method {
-	case http.MethodGet:
-		tmpl, err := template.ParseFiles("frontend/templates/sign-in.html")
-		if err != nil {
-			log.Printf("Failed parsing template: %v\n", err)
-			ErrorHandler(w, "Page Not Found", http.StatusNotFound)
-			return
-		}
-
-		err = tmpl.Execute(w, nil)
-		if err != nil {
-			log.Printf("Failed to execute template: %v\n", err)
-			ErrorHandler(w, "Something Unexpected Happened. Try Again Later", http.StatusInternalServerError)
-			return
-		}
-	case http.MethodPost:
-		if err := r.ParseForm(); err != nil {
-			log.Printf("Failed parsing form: %v\n", err)
-			ErrorHandler(w, "Bad Request", http.StatusBadRequest)
-			return
-		}
-
-		email, password := r.FormValue("email"), r.FormValue("password")
-
-		if len(strings.TrimSpace(email)) == 0 {
-			fmt.Println("Email value cannot be an empty string")
-			return
-		}
-
-		if len(strings.TrimSpace(password)) == 0 {
-			fmt.Println("Password value cannot be an empty string")
-			return
-		}
-
-		var (
-			userID       int
-			storedHash   string
-			sessionToken sql.NullString
-		)
-
-		// Check user existance in the db
-		err := database.DB.QueryRow("SELECT id, password, session_token FROM users WHERE email = ?", email).Scan(&userID, &storedHash, &sessionToken)
-		if err == sql.ErrNoRows {
-			log.Printf("Invalid credentials. No user found: %v\n", err)
-			ErrorHandler(w, "Unauthorized User", http.StatusUnauthorized)
-			return
-		} else if err != nil {
-			log.Printf("Failed quering database row: %v\n", err)
-			ErrorHandler(w, "Something Unexpected Happened. Try Again Later", http.StatusInternalServerError)
-			return
-		}
-
-		// Compare hashed password
-		if err := bcrypt.CompareHashAndPassword([]byte(storedHash), []byte(password)); err != nil {
-			log.Printf("Invalid credentials: %v\n", err)
-			ErrorHandler(w, "Unauthorized User", http.StatusUnauthorized)
-			return
-		}
-
-		newSessionToken := uuid.New().String()
-
-		_, err = database.DB.Exec("UPDATE users SET session_token = ? WHERE id = ?", newSessionToken, userID)
-		if err != nil {
-			log.Printf("Failed to update session token: %v\n", err)
-			ErrorHandler(w, "Something Unexpected Happened. Try Again Later", http.StatusInternalServerError)
-			return
-		}
-
-		http.SetCookie(w, &http.Cookie{
-			Name:     "session_token",
-			Value:    newSessionToken,
-			Path:     "/",
-			HttpOnly: true,
-			Secure:   true,
-			Expires:  time.Now().Add(24 * time.Hour),
-		})
-
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-	default:
-		log.Println("Invalid request method")
-		ErrorHandler(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		logger.Error("Method %q not allowed", r.Method)
 		return
 	}
+
+	var signinRequest SigninRequest
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&signinRequest); err != nil {
+		respondWithError(w, "Invalid request body", http.StatusBadRequest)
+		logger.Error("Invalid request body %v", err)
+		return
+	}
+	defer r.Body.Close()
+
+	if signinRequest.Identifier == "" || signinRequest.Password == "" {
+		respondWithError(w, "Email/nickname and password are required", http.StatusBadRequest)
+		logger.Error("Email/nickname and password are required")
+		return
+	}
+
+	var user model.User
+	var hashedPassword string
+
+	query := `SELECT id, first_name, last_name, nick_name, gender, age, email, password 
+              FROM users 
+              WHERE email = ? OR nick_name = ?`
+
+	err := database.DB.QueryRow(query, signinRequest.Identifier, signinRequest.Identifier).Scan(
+		&user.ID,
+		&user.FirstName,
+		&user.LastName,
+		&user.NickName,
+		&user.Gender,
+		&user.Age,
+		&user.Email,
+		&hashedPassword,
+	)
+
+	if err == sql.ErrNoRows {
+		respondWithError(w, "Invalid credentials", http.StatusUnauthorized)
+		logger.Error("Invalid credentials: %v", err)
+		return
+	} else if err != nil {
+		respondWithError(w, "Database error", http.StatusInternalServerError)
+		logger.Error("Database error: %v", err)
+		return
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(signinRequest.Password))
+	if err != nil {
+		respondWithError(w, "Invalid credentials", http.StatusUnauthorized)
+		logger.Error("Invalid credentials: %v", err)
+		return
+	}
+
+	token, err := util.GenerateSessionToken()
+	if err != nil {
+		respondWithError(w, "Authentication error", http.StatusInternalServerError)
+		logger.Error("Authentication error: %v", err)
+		return
+	}
+
+	http.SetCookie(w, &http.Cookie{
+		Name:     "auth_token",
+		Value:    token,
+		Path:     "/",
+		MaxAge:   3600 * 24,
+		HttpOnly: true,
+		Secure:   r.TLS != nil,
+		SameSite: http.SameSiteLaxMode,
+	})
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(SigninResponse{
+		Success: true,
+		Message: "Sign in successful",
+	})
 }
