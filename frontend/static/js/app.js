@@ -188,7 +188,9 @@ async function signUpView() {
   `;
 
   // Initialize the sign up form validation
-  initSignupValidation();
+  setTimeout(() => {
+    initSignupValidation();
+  }, 0);
 }
 
 // Function to render the sign in view.
@@ -236,5 +238,7 @@ async function signInView() {
   `;
 
   // Initialize the sign in form validation
-  initSigninValidation();
+  setTimeout(() => {
+    initSigninValidation();
+  }, 0);
 }
