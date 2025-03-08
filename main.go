@@ -18,7 +18,7 @@ func main() {
 		return
 	}
 
-	err = logger.NewLogger("app.log", slog.LevelDebug)
+	err = logger.NewLogger("data/app.log", slog.LevelDebug)
 	if err != nil {
 		panic(err)
 	}

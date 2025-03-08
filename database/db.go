@@ -15,7 +15,7 @@ InitDB installs the neccessary drivers and environment required to run the datab
 func InitDB() {
 	var err error
 
-	DB, err = sql.Open("sqlite3", "./forum.db")
+	DB, err = sql.Open("sqlite3", "data/forum.db")
 	if err != nil {
 		log.Printf("Failed to open database: %v\n", err)
 		return
