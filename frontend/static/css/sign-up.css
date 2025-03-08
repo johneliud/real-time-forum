@@ -20,6 +20,7 @@ button:hover {
   padding: 1rem 2rem;
   border-radius: 0.5rem;
   transition: var(--transition);
+  z-index: 10;
 }
 
 .message-popup.show {
