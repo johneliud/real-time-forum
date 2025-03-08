@@ -1,3 +1,5 @@
+import { showMessage } from "./script.js";
+
 export function initSigninValidation() {
   const signinForm = document.getElementById("signin-form");
   const messagePopup = document.getElementById("message-popup");
@@ -15,17 +17,6 @@ export function initSigninValidation() {
     });
   });
 
-  function showMessage(message, isSuccess) {
-    messagePopup.textContent = message;
-    messagePopup.classList.remove("success", "error");
-
-    messagePopup.classList.add("show", isSuccess ? "success" : "error");
-
-    setTimeout(() => {
-      messagePopup.classList.remove("show", "success", "error");
-    }, 3000);
-  }
-
   // Form submission
   signinForm.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -33,7 +24,7 @@ export function initSigninValidation() {
     // Clear previous messages
     if (messagePopup) {
       messagePopup.textContent = "";
-      messagePopup.style.display = "none";
+      messagePopup.classList.remove("show", "success", "error");
     }
 
     const identifier = document.getElementById("email-or-nickname").value;
@@ -41,7 +32,7 @@ export function initSigninValidation() {
 
     // Validate form before submission
     if (!signinForm.checkValidity()) {
-      showMessage("Please check your form values again!", "error");
+      showMessage("Please check your form values again!", false);
       return;
     }
 
@@ -63,7 +54,7 @@ export function initSigninValidation() {
       const result = await response.json();
 
       if (result.success) {
-        showMessage(result.message || "Sign in successful!", "success");
+        showMessage(result.message || "Sign in successful!", true);
 
         // Store user data in localStorage
         localStorage.setItem("user", JSON.stringify(result.userData));
@@ -78,11 +69,11 @@ export function initSigninValidation() {
           window.location.href = "/";
         }, 2000);
       } else {
-        showMessage(result.message || "Sign in failed.", "error");
+        showMessage(result.message || "Sign in failed.", false);
       }
     } catch (error) {
       console.error("Signin error:", error);
-      showMessage("An unexpected error occurred. Please try again.", "error");
+      showMessage("An unexpected error occurred. Please try again.", false);
     }
   });
 }

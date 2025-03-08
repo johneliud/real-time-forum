@@ -1,3 +1,5 @@
+import { showMessage } from "./script.js";
+
 export function initSignupValidation() {
   const signupForm = document.getElementById("signup-form");
   const messagePopup = document.getElementById("message-popup");
@@ -119,17 +121,6 @@ export function initSignupValidation() {
     });
   });
 
-  function showMessage(message, isSuccess) {
-    messagePopup.textContent = message;
-    messagePopup.classList.remove("success", "error");
-
-    messagePopup.classList.add("show", isSuccess ? "success" : "error");
-
-    setTimeout(() => {
-      messagePopup.classList.remove("show", "success", "error");
-    }, 3000);
-  }
-
   // Form submission
   signupForm.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -137,12 +128,12 @@ export function initSignupValidation() {
     // Clear previous messages
     if (messagePopup) {
       messagePopup.textContent = "";
-      messagePopup.style.display = "none";
+      messagePopup.classList.remove("show", "success", "error");
     }
 
     // Validate form before submission
     if (!signupForm.checkValidity()) {
-      showMessage("Please check your form values again!", "error");
+      showMessage("Please check your form values again!", false);
       return;
     }
 
@@ -170,18 +161,18 @@ export function initSignupValidation() {
       const result = await response.json();
 
       if (result.success) {
-        showMessage(result.message || "Sign up successful!", "success");
+        showMessage(result.message || "Sign up successful!", true);
 
         // Redirect after successful signup
         setTimeout(() => {
           window.location.href = "/sign-in";
         }, 2000);
       } else {
-        showMessage(result.message || "Sign up failed.", "error");
+        showMessage(result.message || "Sign up failed.", false);
       }
     } catch (error) {
       console.error("Signup error:", error);
-      showMessage("An unexpected error occurred. Please try again.", "error");
+      showMessage("An unexpected error occurred. Please try again.", false);
     }
   });
 }
