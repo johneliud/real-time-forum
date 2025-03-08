@@ -4,18 +4,19 @@ import (
 	"net/http"
 
 	"github.com/johneliud/real-time-forum/backend/controller"
-	"github.com/johneliud/real-time-forum/backend/middleware"
 )
 
 func Routes() {
 	fs := http.FileServer(http.Dir("./frontend"))
 	http.Handle("/frontend/", http.StripPrefix("/frontend/", fs))
 
-	http.HandleFunc("/sign-up", controller.SignupHandler)
-	http.HandleFunc("/sign-in", controller.SigninHandler)
-	http.HandleFunc("/logout", controller.LogoutHandler)
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "./frontend/templates/index.html")
+	})
 
-	http.HandleFunc("/validate", controller.ValidateInputHandler)
+	// API routes
+	http.HandleFunc("/api/sign-up", controller.SignupHandler)
+	http.HandleFunc("/api/validate", controller.ValidateInputHandler)
 
-	http.Handle("/", middleware.AuthenticateMiddleware(http.HandlerFunc(controller.HomeHandler)))
+	http.HandleFunc("/api/sign-in", controller.SigninHandler)
 }

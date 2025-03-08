@@ -1,58 +1,41 @@
-document.addEventListener('DOMContentLoaded', () => {
+export function initThemeToggler() {
+  const savedTheme = localStorage.getItem("theme") || "light";
+  applyTheme(savedTheme);
+
+  document.body.addEventListener("click", (e) => {
+    if (e.target.closest(".theme-toggler")) {
+      toggleTheme();
+    }
+  });
+
   function applyTheme(theme) {
-    if (theme === 'dark') {
-      document.body.classList.add('dark-theme');
+    if (theme === "dark") {
+      document.body.classList.add("dark-theme");
     } else {
-      document.body.classList.remove('dark-theme');
+      document.body.classList.remove("dark-theme");
     }
   }
 
   function toggleTheme() {
-    let currentTheme = '';
-    let newTheme = '';
-
-    if (document.body.classList.contains('dark-theme')) {
-      currentTheme = 'dark';
-    } else {
-      currentTheme = 'light';
-    }
-
-    if (currentTheme === 'dark') {
-      newTheme = 'light';
-    } else {
-      newTheme = 'dark';
-    }
+    const currentTheme = document.body.classList.contains("dark-theme")
+      ? "dark"
+      : "light";
+    const newTheme = currentTheme === "dark" ? "light" : "dark";
 
     applyTheme(newTheme);
-    localStorage.setItem('theme', newTheme);
+    localStorage.setItem("theme", newTheme);
   }
-  const savedTheme = localStorage.getItem('theme') || 'light';
-  applyTheme(savedTheme);
+}
 
-  const themeToggler = document.querySelector('.theme-toggler');
+export function showMessage(message, isSuccess) {
+  const messagePopup = document.getElementById("message-popup");
 
-  if (themeToggler) {
-    themeToggler.addEventListener('click', toggleTheme);
-  }
+  messagePopup.textContent = message;
+  messagePopup.classList.remove("success", "error");
 
-  const hamburgerMenu = document.querySelector('.hamburger-menu');
-  const menuContent = document.querySelector('.menu-content');
+  messagePopup.classList.add("show", isSuccess ? "success" : "error");
 
-  if (hamburgerMenu) {
-    hamburgerMenu.addEventListener('click', () => {
-      hamburgerMenu.classList.toggle('active');
-      menuContent.style.display =
-        menuContent.style.display === 'block' ? 'none' : 'block';
-    });
-
-    document.addEventListener('click', function (event) {
-      if (
-        !hamburgerMenu.contains(event.target) &&
-        !menuContent.contains(event.target)
-      ) {
-        menuContent.style.display = 'none';
-        hamburgerMenu.classList.remove('active');
-      }
-    });
-  }
-});
+  setTimeout(() => {
+    messagePopup.classList.remove("show", "success", "error");
+  }, 3000);
+}

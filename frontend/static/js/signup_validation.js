@@ -1,6 +1,13 @@
-document.addEventListener("DOMContentLoaded", () => {
+import { showMessage } from "./script.js";
+
+export function initSignupValidation() {
   const signupForm = document.getElementById("signup-form");
   const messagePopup = document.getElementById("message-popup");
+
+  if (!signupForm || !messagePopup) {
+    console.error("Required elements not found");
+    return;
+  }
 
   const firstNameInput = document.getElementById("first-name");
   const lastNameInput = document.getElementById("last-name");
@@ -11,20 +18,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const passwordInput = document.getElementById("password");
   const confirmPasswordInput = document.getElementById("confirmed-password");
 
-  async function checkAvailability(field, value) {
-    if (!value.trim()) return null;
-
-    try {
-      const response = await fetch(
-        `/validate?${field}=${encodeURIComponent(value)}`
-      );
-      const data = await response.json();
-      return data.available;
-    } catch (error) {
-      console.error("Error validating input:", error);
-      return null;
-    }
+  // Create and attach feedback elements
+  function createFeedbackElement(parentNode) {
+    const feedbackElement = document.createElement("p");
+    feedbackElement.className = "feedback-message";
+    parentNode.appendChild(feedbackElement);
+    return feedbackElement;
   }
+
+  const nickNameFeedback = createFeedbackElement(nickNameInput.parentNode);
+  const emailFeedback = createFeedbackElement(emailInput.parentNode);
 
   // Debounce function to prevent excessive calls
   function debounce(func, delay) {
@@ -35,16 +38,21 @@ document.addEventListener("DOMContentLoaded", () => {
     };
   }
 
-  // Create and manage feedback elements
-  function createFeedbackElement(parentNode) {
-    const feedbackElement = document.createElement("p");
-    feedbackElement.className = "feedback-message";
-    parentNode.appendChild(feedbackElement);
-    return feedbackElement;
-  }
+  // Check availability of nickname and email
+  async function checkAvailability(field, value) {
+    if (!value.trim()) return null;
 
-  const nickNameFeedback = createFeedbackElement(nickNameInput.parentNode);
-  const emailFeedback = createFeedbackElement(emailInput.parentNode);
+    try {
+      const response = await fetch(
+        `/api/validate?${field}=${encodeURIComponent(value)}`
+      );
+      const data = await response.json();
+      return data.available;
+    } catch (error) {
+      console.error("Error validating input:", error);
+      return null;
+    }
+  }
 
   // Event listeners for availability checks
   nickNameInput.addEventListener(
@@ -60,7 +68,7 @@ document.addEventListener("DOMContentLoaded", () => {
           : "Nickname is taken";
         nickNameFeedback.style.color = isAvailable ? "green" : "red";
       }
-    }, 500)
+    }, 1000)
   );
 
   emailInput.addEventListener(
@@ -73,7 +81,7 @@ document.addEventListener("DOMContentLoaded", () => {
           : "Email is taken";
         emailFeedback.style.color = isAvailable ? "green" : "red";
       }
-    }, 500)
+    }, 1000)
   );
 
   // Password strength validation
@@ -89,7 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return "";
   }
 
-  // Password input validations
+  // Password validation
   passwordInput.addEventListener("input", () => {
     const passwordError = validatePasswordStrength(passwordInput.value);
     passwordInput.setCustomValidity(passwordError);
@@ -105,12 +113,27 @@ document.addEventListener("DOMContentLoaded", () => {
     confirmPasswordInput.reportValidity();
   });
 
-  // Form submission handler
+  // Password visibility toggle
+  document.querySelectorAll(".toggle-password-visibility").forEach((button) => {
+    button.addEventListener("click", () => {
+      const input = document.getElementById(button.dataset.target);
+      input.type = input.type === "password" ? "text" : "password";
+    });
+  });
+
+  // Form submission
   signupForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
+    // Clear previous messages
+    if (messagePopup) {
+      messagePopup.textContent = "";
+      messagePopup.classList.remove("show", "success", "error");
+    }
+
     // Validate form before submission
     if (!signupForm.checkValidity()) {
+      showMessage("Please check your form values again!", false);
       return;
     }
 
@@ -127,7 +150,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     try {
-      const response = await fetch("/sign-up", {
+      const response = await fetch("/api/sign-up", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -138,29 +161,18 @@ document.addEventListener("DOMContentLoaded", () => {
       const result = await response.json();
 
       if (result.success) {
-        messagePopup.textContent = result.message;
-        messagePopup.style.color = "green";
+        showMessage(result.message || "Sign up successful!", true);
 
+        // Redirect after successful signup
         setTimeout(() => {
           window.location.href = "/sign-in";
         }, 2000);
       } else {
-        messagePopup.textContent = result.message;
-        messagePopup.style.color = "red";
+        showMessage(result.message || "Sign up failed.", false);
       }
     } catch (error) {
       console.error("Signup error:", error);
-      messagePopup.textContent =
-        "An unexpected error occurred. Please try again.";
-      messagePopup.style.color = "red";
+      showMessage("An unexpected error occurred. Please try again.", false);
     }
   });
-
-  // Password visibility toggle
-  document.querySelectorAll(".toggle-password-visibility").forEach((button) => {
-    button.addEventListener("click", () => {
-      const input = document.getElementById(button.dataset.target);
-      input.type = input.type === "password" ? "text" : "password";
-    });
-  });
-});
+}

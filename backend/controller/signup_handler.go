@@ -15,27 +15,17 @@ type SignupResponse struct {
 }
 
 func SignupHandler(w http.ResponseWriter, r *http.Request) {
-	// Set CORS headers
+
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 
-	// Handle preflight request
 	if r.Method == http.MethodOptions {
 		w.WriteHeader(http.StatusOK)
 		return
 	}
 
-	if r.Method == http.MethodGet {
-		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(map[string]string{
-			"message": "Signup page ready",
-		})
-		return
-	}
-
-	// Proceed with POST request handling
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 		return
@@ -55,6 +45,29 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Check if user with the same email already exists
+	var count int
+	err := database.DB.QueryRow("SELECT COUNT(*) FROM users WHERE email = ?", signupRequest.Email).Scan(&count)
+	if err != nil {
+		respondWithError(w, "Database error", http.StatusInternalServerError)
+		return
+	}
+	if count > 0 {
+		respondWithError(w, "Email already registered", http.StatusBadRequest)
+		return
+	}
+
+	// Check if user with the same nickname already exists
+	err = database.DB.QueryRow("SELECT COUNT(*) FROM users WHERE nick_name = ?", signupRequest.NickName).Scan(&count)
+	if err != nil {
+		respondWithError(w, "Database error", http.StatusInternalServerError)
+		return
+	}
+	if count > 0 {
+		respondWithError(w, "Nickname already taken", http.StatusBadRequest)
+		return
+	}
+
 	// Hash password
 	hashedPassword, err := util.HashPassword(signupRequest.Password)
 	if err != nil {
@@ -64,11 +77,11 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Insert user into database
 	stmt, err := database.DB.Prepare(`
-		INSERT INTO users (
-			first_name, last_name, nick_name, 
-			gender, age, email, password
-		) VALUES (?, ?, ?, ?, ?, ?, ?)
-	`)
+        INSERT INTO users (
+            first_name, last_name, nick_name, 
+            gender, age, email, password
+        ) VALUES (?, ?, ?, ?, ?, ?, ?)
+    `)
 	if err != nil {
 		respondWithError(w, "Database preparation failed", http.StatusInternalServerError)
 		return

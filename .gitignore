@@ -3,3 +3,4 @@ uploads/
 tmp/
 .air.toml
 .env
+app.log
