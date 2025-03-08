@@ -17,4 +17,6 @@ func Routes() {
 	// API routes
 	http.HandleFunc("/api/sign-up", controller.SignupHandler)
 	http.HandleFunc("/api/validate", controller.ValidateInputHandler)
+
+	http.HandleFunc("/api/sign-in", controller.SigninHandler)
 }
