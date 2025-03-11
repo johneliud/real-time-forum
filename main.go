@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"os"
 
 	"github.com/johneliud/real-time-forum/backend/logger"
 	"github.com/johneliud/real-time-forum/backend/routes"
@@ -12,21 +13,31 @@ import (
 )
 
 func main() {
-	err := util.LoadEnv(".env")
-	if err != nil {
-		fmt.Println("Error loading .env file:", err)
-		return
-	}
+	var err error
+
+	_ = os.Mkdir("data", 0o700)
 
 	err = logger.NewLogger("data/app.log", slog.LevelDebug)
 	if err != nil {
 		panic(err)
 	}
 
-	database.InitDB()
+	port, err := util.ValidatePort()
+	if err != nil {
+		logger.Error("Error validating port:", err)
+		return
+	}
 
+	err = util.LoadEnv(".env")
+	if err != nil {
+		logger.Error("Failed loading .env file:", err)
+		return
+	}
+
+	database.InitDB()
 	routes.Routes()
 
-	logger.Info("Server started at http://localhost:8080")
-	http.ListenAndServe(":8080", nil)
+	serverMessage := fmt.Sprintf("Server started at http://localhost%v", port)
+	logger.Info(serverMessage)
+	http.ListenAndServe(port, nil)
 }
