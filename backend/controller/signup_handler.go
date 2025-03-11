@@ -3,6 +3,7 @@ package controller
 import (
 	"encoding/json"
 	"net/http"
+	"strings"
 
 	"github.com/johneliud/real-time-forum/backend/logger"
 	"github.com/johneliud/real-time-forum/backend/model"
@@ -111,6 +112,16 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 	)
 	if err != nil {
 		logger.Error("User registration failed", err)
+		if strings.Contains(err.Error(), "UNIQUE constraint") {
+			if strings.Contains(err.Error(), "users.email") {
+				respondWithError(w, "Email already registered", http.StatusBadRequest)
+			} else if strings.Contains(err.Error(), "users.nick_name") {
+				respondWithError(w, "Nickname already taken", http.StatusBadRequest)
+			} else {
+				respondWithError(w, "User already exists", http.StatusBadRequest)
+			}
+			return
+		}
 		respondWithError(w, "User registration failed", http.StatusBadRequest)
 		return
 	}
