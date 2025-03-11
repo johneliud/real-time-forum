@@ -1,9 +1,9 @@
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    first_name TEXT UNIQUE NOT NULL,
-    last_name TEXT UNIQUE NOT NULL,
+    first_name TEXT NOT NULL,
+    last_name TEXT NOT NULL,
     nick_name TEXT UNIQUE NOT NULL,
-    gender TEXT UNIQUE NOT NULL,
+    gender TEXT NOT NULL,
     age INTEGER NOT NULL,
     email TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
