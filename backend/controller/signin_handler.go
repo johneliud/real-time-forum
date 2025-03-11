@@ -23,12 +23,15 @@ type SigninRequest struct {
 }
 
 func SigninHandler(w http.ResponseWriter, r *http.Request) {
+	logger.Info("Received signup request")
+
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 
 	if r.Method == http.MethodOptions {
+		logger.Info("OPTIONS request, returning", r.Method)
 		w.WriteHeader(http.StatusOK)
 		return
 	}
@@ -74,7 +77,7 @@ func SigninHandler(w http.ResponseWriter, r *http.Request) {
 
 	if err == sql.ErrNoRows {
 		respondWithError(w, "Invalid credentials", http.StatusUnauthorized)
-		logger.Error("Invalid credentials: %v", err)
+		logger.Warn("Invalid credentials: %v", err)
 		return
 	} else if err != nil {
 		respondWithError(w, "Database error", http.StatusInternalServerError)
@@ -85,7 +88,7 @@ func SigninHandler(w http.ResponseWriter, r *http.Request) {
 	err = bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(signinRequest.Password))
 	if err != nil {
 		respondWithError(w, "Invalid credentials", http.StatusUnauthorized)
-		logger.Error("Invalid credentials: %v", err)
+		logger.Warn("Invalid credentials: %v", err)
 		return
 	}
 
@@ -106,6 +109,7 @@ func SigninHandler(w http.ResponseWriter, r *http.Request) {
 		SameSite: http.SameSiteLaxMode,
 	})
 
+	logger.Info("User authenticated successfully")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(SigninResponse{
 		Success: true,

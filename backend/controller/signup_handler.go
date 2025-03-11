@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/johneliud/real-time-forum/backend/logger"
 	"github.com/johneliud/real-time-forum/backend/model"
 	"github.com/johneliud/real-time-forum/backend/util"
 	"github.com/johneliud/real-time-forum/database"
@@ -15,6 +16,7 @@ type SignupResponse struct {
 }
 
 func SignupHandler(w http.ResponseWriter, r *http.Request) {
+	logger.Info("Received signup request")
 
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -22,11 +24,13 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 
 	if r.Method == http.MethodOptions {
+		logger.Info("OPTIONS request, returning", r.Method)
 		w.WriteHeader(http.StatusOK)
 		return
 	}
 
 	if r.Method != http.MethodPost {
+		logger.Error("Invalid HTTP method", r.Method)
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 		return
 	}
@@ -34,6 +38,7 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 	var signupRequest model.SignupRequest
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&signupRequest); err != nil {
+		logger.Error("Invalid request body", err)
 		respondWithError(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
@@ -41,6 +46,7 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Validate input
 	if err := util.ValidateSignupRequest(signupRequest); err != nil {
+		logger.Error("Failed validating request", err)
 		respondWithError(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -49,10 +55,12 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 	var count int
 	err := database.DB.QueryRow("SELECT COUNT(*) FROM users WHERE email = ?", signupRequest.Email).Scan(&count)
 	if err != nil {
+		logger.Error("Database error checking email", err)
 		respondWithError(w, "Database error", http.StatusInternalServerError)
 		return
 	}
 	if count > 0 {
+		logger.Warn("Email already registered", signupRequest.Email)
 		respondWithError(w, "Email already registered", http.StatusBadRequest)
 		return
 	}
@@ -60,10 +68,12 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 	// Check if user with the same nickname already exists
 	err = database.DB.QueryRow("SELECT COUNT(*) FROM users WHERE nick_name = ?", signupRequest.NickName).Scan(&count)
 	if err != nil {
+		logger.Error("Database error checking nick name", err)
 		respondWithError(w, "Database error", http.StatusInternalServerError)
 		return
 	}
 	if count > 0 {
+		logger.Warn("Nickname already taken", signupRequest.NickName)
 		respondWithError(w, "Nickname already taken", http.StatusBadRequest)
 		return
 	}
@@ -71,6 +81,7 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 	// Hash password
 	hashedPassword, err := util.HashPassword(signupRequest.Password)
 	if err != nil {
+		logger.Error("Password hashing failed", err)
 		respondWithError(w, "Password hashing failed", http.StatusInternalServerError)
 		return
 	}
@@ -83,6 +94,7 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
         ) VALUES (?, ?, ?, ?, ?, ?, ?)
     `)
 	if err != nil {
+		logger.Error("Database preparation failed", err)
 		respondWithError(w, "Database preparation failed", http.StatusInternalServerError)
 		return
 	}
@@ -98,11 +110,12 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 		hashedPassword,
 	)
 	if err != nil {
+		logger.Error("User registration failed", err)
 		respondWithError(w, "User registration failed", http.StatusBadRequest)
 		return
 	}
 
-	// Respond with success
+	logger.Info("User registered successfully")
 	respondWithSuccess(w, "User registered successfully")
 }
 
