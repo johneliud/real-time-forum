@@ -17,9 +17,14 @@ export function initSigninValidation() {
     });
   });
 
+  let isSubmitting = false;
+
   // Form submission
   signinForm.addEventListener('submit', async (e) => {
     e.preventDefault();
+
+    if (isSubmitting) return;
+    isSubmitting = true;
 
     // Clear previous messages
     if (messagePopup) {
@@ -33,6 +38,7 @@ export function initSigninValidation() {
     // Validate form before submission
     if (!signinForm.checkValidity()) {
       showMessage('Please check your form values and try again!', false);
+      isSubmitting = false;
       return;
     }
 
@@ -58,11 +64,12 @@ export function initSigninValidation() {
 
       if (!result.success) {
         showMessage(result.message || 'Sign in failed.', false);
+        isSubmitting = false;
         return;
       } else if (result.success) {
         showMessage(result.message || 'Sign in successful!', true);
 
-        signinData = {};
+        signinForm.reset();
 
         // Redirect after successful signin
         setTimeout(() => {
@@ -72,6 +79,7 @@ export function initSigninValidation() {
     } catch (error) {
       console.error('Signin error:', error);
       showMessage('An unexpected error occurred. Please try again.', false);
+      isSubmitting = false;
     }
   });
 }

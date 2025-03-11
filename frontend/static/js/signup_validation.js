@@ -21,9 +21,6 @@ export function initSignupValidation() {
     return feedbackElement;
   }
 
-  const nickNameFeedback = createFeedbackElement(nickNameInput.parentNode);
-  const emailFeedback = createFeedbackElement(emailInput.parentNode);
-
   // Debounce function to prevent excessive calls
   function debounce(func, delay) {
     let timeout;
@@ -49,35 +46,43 @@ export function initSignupValidation() {
     }
   }
 
-  // Event listeners for availability checks
-  nickNameInput.addEventListener(
-    'input',
-    debounce(async () => {
-      const isAvailable = await checkAvailability(
-        'nick-name',
-        nickNameInput.value
-      );
-      if (isAvailable !== null) {
-        nickNameFeedback.textContent = isAvailable
-          ? 'Nickname is available'
-          : 'Nickname is taken';
-        nickNameFeedback.style.color = isAvailable ? 'green' : 'red';
-      }
-    }, 1000)
-  );
+  if (nickNameInput) {
+    const nickNameFeedback = createFeedbackElement(nickNameInput.parentNode);
 
-  emailInput.addEventListener(
-    'input',
-    debounce(async () => {
-      const isAvailable = await checkAvailability('email', emailInput.value);
-      if (isAvailable !== null) {
-        emailFeedback.textContent = isAvailable
-          ? 'Email is available'
-          : 'Email is taken';
-        emailFeedback.style.color = isAvailable ? 'green' : 'red';
-      }
-    }, 1000)
-  );
+    // Event listeners for availability checks
+    nickNameInput.addEventListener(
+      'input',
+      debounce(async () => {
+        const isAvailable = await checkAvailability(
+          'nick-name',
+          nickNameInput.value
+        );
+        if (isAvailable !== null) {
+          nickNameFeedback.textContent = isAvailable
+            ? 'Nickname is available'
+            : 'Nickname is taken';
+          nickNameFeedback.style.color = isAvailable ? 'green' : 'red';
+        }
+      }, 1000)
+    );
+  }
+
+  if (emailInput) {
+    const emailFeedback = createFeedbackElement(emailInput.parentNode);
+
+    emailInput.addEventListener(
+      'input',
+      debounce(async () => {
+        const isAvailable = await checkAvailability('email', emailInput.value);
+        if (isAvailable !== null) {
+          emailFeedback.textContent = isAvailable
+            ? 'Email is available'
+            : 'Email is taken';
+          emailFeedback.style.color = isAvailable ? 'green' : 'red';
+        }
+      }, 1000)
+    );
+  }
 
   // Password strength validation
   function validatePasswordStrength(password) {
@@ -116,9 +121,32 @@ export function initSignupValidation() {
     });
   });
 
+  let isSubmitting = false;
+
   // Form submission
   signupForm.addEventListener('submit', async (e) => {
     e.preventDefault();
+
+    if (isSubmitting) return;
+    isSubmitting = true;
+
+    const emailAvailable = await checkAvailability('email', emailInput.value);
+    const nicknameAvailable = await checkAvailability(
+      'nick-name',
+      nickNameInput.value
+    );
+
+    if (!emailAvailable) {
+      showMessage('Email is already registered.', false);
+      isSubmitting = false;
+      return;
+    }
+
+    if (!nicknameAvailable) {
+      showMessage('Nickname is already taken.', false);
+      isSubmitting = false;
+      return;
+    }
 
     // Clear previous messages
     if (messagePopup) {
@@ -129,6 +157,7 @@ export function initSignupValidation() {
     // Validate form before submission
     if (!signupForm.checkValidity()) {
       showMessage('Please check your form values and try again!', false);
+      isSubmitting = false;
       return;
     }
 
@@ -160,11 +189,12 @@ export function initSignupValidation() {
 
       if (!result.success) {
         showMessage(result.message || 'Sign up failed.', false);
+        isSubmitting = false;
         return;
       } else if (result.success) {
         showMessage(result.message || 'Sign up successful!', true);
 
-        signupData = {};
+        signupForm.reset();
 
         // Redirect after successful signup
         setTimeout(() => {
@@ -174,6 +204,7 @@ export function initSignupValidation() {
     } catch (error) {
       console.error('Signup error:', error);
       showMessage('An unexpected error occurred. Please try again.', false);
+      isSubmitting = false;
     }
   });
 }
