@@ -1,27 +1,22 @@
-import { showMessage } from "./script.js";
+import { showMessage } from './script.js';
 
 export function initSignupValidation() {
-  const signupForm = document.getElementById("signup-form");
-  const messagePopup = document.getElementById("message-popup");
+  const signupForm = document.getElementById('signup-form');
+  const messagePopup = document.getElementById('message-popup');
 
-  if (!signupForm || !messagePopup) {
-    console.error("Required elements not found");
-    return;
-  }
-
-  const firstNameInput = document.getElementById("first-name");
-  const lastNameInput = document.getElementById("last-name");
-  const nickNameInput = document.getElementById("nick-name");
-  const genderInput = document.getElementById("gender");
-  const ageInput = document.getElementById("age");
-  const emailInput = document.getElementById("email");
-  const passwordInput = document.getElementById("password");
-  const confirmPasswordInput = document.getElementById("confirmed-password");
+  const firstNameInput = document.getElementById('first-name');
+  const lastNameInput = document.getElementById('last-name');
+  const nickNameInput = document.getElementById('nick-name');
+  const genderInput = document.getElementById('gender');
+  const ageInput = document.getElementById('age');
+  const emailInput = document.getElementById('email');
+  const passwordInput = document.getElementById('password');
+  const confirmPasswordInput = document.getElementById('confirmed-password');
 
   // Create and attach feedback elements
   function createFeedbackElement(parentNode) {
-    const feedbackElement = document.createElement("p");
-    feedbackElement.className = "feedback-message";
+    const feedbackElement = document.createElement('p');
+    feedbackElement.className = 'feedback-message';
     parentNode.appendChild(feedbackElement);
     return feedbackElement;
   }
@@ -49,91 +44,91 @@ export function initSignupValidation() {
       const data = await response.json();
       return data.available;
     } catch (error) {
-      console.error("Error validating input:", error);
+      console.error('Error validating input:', error);
       return null;
     }
   }
 
   // Event listeners for availability checks
   nickNameInput.addEventListener(
-    "input",
+    'input',
     debounce(async () => {
       const isAvailable = await checkAvailability(
-        "nick-name",
+        'nick-name',
         nickNameInput.value
       );
       if (isAvailable !== null) {
         nickNameFeedback.textContent = isAvailable
-          ? "Nickname is available"
-          : "Nickname is taken";
-        nickNameFeedback.style.color = isAvailable ? "green" : "red";
+          ? 'Nickname is available'
+          : 'Nickname is taken';
+        nickNameFeedback.style.color = isAvailable ? 'green' : 'red';
       }
     }, 1000)
   );
 
   emailInput.addEventListener(
-    "input",
+    'input',
     debounce(async () => {
-      const isAvailable = await checkAvailability("email", emailInput.value);
+      const isAvailable = await checkAvailability('email', emailInput.value);
       if (isAvailable !== null) {
         emailFeedback.textContent = isAvailable
-          ? "Email is available"
-          : "Email is taken";
-        emailFeedback.style.color = isAvailable ? "green" : "red";
+          ? 'Email is available'
+          : 'Email is taken';
+        emailFeedback.style.color = isAvailable ? 'green' : 'red';
       }
     }, 1000)
   );
 
   // Password strength validation
   function validatePasswordStrength(password) {
-    if (password.length < 8) return "Must contain at least 8 characters.";
+    if (password.length < 8) return 'Must contain at least 8 characters.';
     if (!/[A-Z]/.test(password))
-      return "Include at least one uppercase letter.";
+      return 'Include at least one uppercase letter.';
     if (!/[a-z]/.test(password))
-      return "Include at least one lowercase letter.";
-    if (!/[0-9]/.test(password)) return "Include at least one number.";
+      return 'Include at least one lowercase letter.';
+    if (!/[0-9]/.test(password)) return 'Include at least one number.';
     if (!/[!,.:;(){}?_@#$%^&*]/.test(password))
-      return "Include at least one special character.";
-    return "";
+      return 'Include at least one special character.';
+    return '';
   }
 
   // Password validation
-  passwordInput.addEventListener("input", () => {
+  passwordInput.addEventListener('input', () => {
     const passwordError = validatePasswordStrength(passwordInput.value);
     passwordInput.setCustomValidity(passwordError);
     passwordInput.reportValidity();
   });
 
-  confirmPasswordInput.addEventListener("input", () => {
+  confirmPasswordInput.addEventListener('input', () => {
     if (passwordInput.value !== confirmPasswordInput.value) {
-      confirmPasswordInput.setCustomValidity("Passwords do not match.");
+      confirmPasswordInput.setCustomValidity('Passwords do not match.');
     } else {
-      confirmPasswordInput.setCustomValidity("");
+      confirmPasswordInput.setCustomValidity('');
     }
     confirmPasswordInput.reportValidity();
   });
 
   // Password visibility toggle
-  document.querySelectorAll(".toggle-password-visibility").forEach((button) => {
-    button.addEventListener("click", () => {
+  document.querySelectorAll('.toggle-password-visibility').forEach((button) => {
+    button.addEventListener('click', () => {
       const input = document.getElementById(button.dataset.target);
-      input.type = input.type === "password" ? "text" : "password";
+      input.type = input.type === 'password' ? 'text' : 'password';
     });
   });
 
   // Form submission
-  signupForm.addEventListener("submit", async (e) => {
+  signupForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     // Clear previous messages
     if (messagePopup) {
-      messagePopup.textContent = "";
-      messagePopup.classList.remove("show", "success", "error");
+      messagePopup.textContent = '';
+      messagePopup.classList.remove('show', 'success', 'error');
     }
 
     // Validate form before submission
     if (!signupForm.checkValidity()) {
-      showMessage("Please check your form values again!", false);
+      showMessage('Please check your form values and try again!', false);
       return;
     }
 
@@ -150,29 +145,35 @@ export function initSignupValidation() {
     };
 
     try {
-      const response = await fetch("/api/sign-up", {
-        method: "POST",
+      const response = await fetch('/api/sign-up', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(signupData),
       });
 
       const result = await response.json();
 
-      if (result.success) {
-        showMessage(result.message || "Sign up successful!", true);
+      console.log('Response Status:', response.status);
+      console.log('Response Body:', result);
+
+      if (!result.success) {
+        showMessage(result.message || 'Sign up failed.', false);
+        return;
+      } else if (result.success) {
+        showMessage(result.message || 'Sign up successful!', true);
+
+        signupData = {};
 
         // Redirect after successful signup
         setTimeout(() => {
-          window.location.href = "/sign-in";
+          window.location.href = '/sign-in';
         }, 2000);
-      } else {
-        showMessage(result.message || "Sign up failed.", false);
       }
     } catch (error) {
-      console.error("Signup error:", error);
-      showMessage("An unexpected error occurred. Please try again.", false);
+      console.error('Signup error:', error);
+      showMessage('An unexpected error occurred. Please try again.', false);
     }
   });
 }
