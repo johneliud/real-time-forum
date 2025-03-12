@@ -2,12 +2,29 @@ package database
 
 import (
 	"database/sql"
-	"log"
+	"fmt"
+	"os"
 
+	"github.com/johneliud/real-time-forum/backend/logger"
 	_ "github.com/mattn/go-sqlite3"
 )
 
 var DB *sql.DB
+
+func executeSchema(DB *sql.DB) error {
+	content, err := os.ReadFile("database/schema.sql")
+	if err != nil {
+		return fmt.Errorf("failed to read schema: %w", err)
+	}
+
+	// Split SQL statements and execute each
+	statements := string(content)
+	_, err = DB.Exec(statements)
+	if err != nil {
+		return fmt.Errorf("failed to execute SQL statements: %w", err)
+	}
+	return nil
+}
 
 /*
 InitDB installs the neccessary drivers and environment required to run the database.
@@ -17,32 +34,18 @@ func InitDB() {
 
 	DB, err = sql.Open("sqlite3", "data/forum.db")
 	if err != nil {
-		log.Printf("Failed to open database: %v\n", err)
+		logger.Error("Failed to open database:", err)
 		return
 	}
 
 	if err = DB.Ping(); err != nil {
-		log.Printf("Database connection failed: %v", err)
+		logger.Error("Connection to database failed:", err)
 		return
 	}
 
-	query := `CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    first_name TEXT UNIQUE NOT NULL,
-    last_name TEXT UNIQUE NOT NULL,
-    nick_name TEXT UNIQUE NOT NULL,
-    gender TEXT UNIQUE NOT NULL,
-    age INTEGER NOT NULL,
-    email TEXT UNIQUE NOT NULL,
-    password TEXT NOT NULL,
-    session_token TEXT UNIQUE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);`
-
-	_, err = DB.Exec(query)
-	if err != nil {
-		log.Printf("Failed executing query: %v\n", err)
+	if err = executeSchema(DB); err != nil {
+		logger.Error("failed to execute SQL file:", err)
 		return
 	}
-	log.Println("Database initialized successfully")
+	logger.Info("Database initialized successfully")
 }
