@@ -2,7 +2,6 @@ import { showMessage } from './script.js';
 
 export function initSignupValidation() {
   const signupForm = document.getElementById('signup-form');
-  const messagePopup = document.getElementById('message-popup');
 
   const firstNameInput = document.getElementById('first-name');
   const lastNameInput = document.getElementById('last-name');
@@ -130,50 +129,45 @@ export function initSignupValidation() {
     if (isSubmitting) return;
     isSubmitting = true;
 
-    const emailAvailable = await checkAvailability('email', emailInput.value);
-    const nicknameAvailable = await checkAvailability(
-      'nick-name',
-      nickNameInput.value
-    );
-
-    if (!emailAvailable) {
-      showMessage('Email is already registered.', false);
-      isSubmitting = false;
-      return;
-    }
-
-    if (!nicknameAvailable) {
-      showMessage('Nickname is already taken.', false);
-      isSubmitting = false;
-      return;
-    }
-
-    // Clear previous messages
-    if (messagePopup) {
-      messagePopup.textContent = '';
-      messagePopup.classList.remove('show', 'success', 'error');
-    }
-
-    // Validate form before submission
-    if (!signupForm.checkValidity()) {
-      showMessage('Please check your form values and try again!', false);
-      isSubmitting = false;
-      return;
-    }
-
-    // Prepare signup data
-    const signupData = {
-      firstName: firstNameInput.value,
-      lastName: lastNameInput.value,
-      nickName: nickNameInput.value,
-      gender: genderInput.value,
-      age: parseInt(ageInput.value, 10),
-      email: emailInput.value,
-      password: passwordInput.value,
-      confirmedPassword: confirmPasswordInput.value,
-    };
+    // Disable the submit button
+    const submitButton = signupForm.querySelector('button[type="submit"]');
+    submitButton.disabled = true;
 
     try {
+      const emailAvailable = await checkAvailability('email', emailInput.value);
+      const nicknameAvailable = await checkAvailability(
+        'nick-name',
+        nickNameInput.value
+      );
+
+      if (!emailAvailable) {
+        showMessage('Email is already registered.', false);
+        return;
+      }
+
+      if (!nicknameAvailable) {
+        showMessage('Nickname is already taken.', false);
+        return;
+      }
+
+      // Validate form before submission
+      if (!signupForm.checkValidity()) {
+        showMessage('Please check your form values and try again!', false);
+        return;
+      }
+
+      // Prepare signup data
+      const signupData = {
+        firstName: firstNameInput.value,
+        lastName: lastNameInput.value,
+        nickName: nickNameInput.value,
+        gender: genderInput.value,
+        age: parseInt(ageInput.value, 10),
+        email: emailInput.value,
+        password: passwordInput.value,
+        confirmedPassword: confirmPasswordInput.value,
+      };
+
       const response = await fetch('/api/sign-up', {
         method: 'POST',
         headers: {
@@ -184,16 +178,10 @@ export function initSignupValidation() {
 
       const result = await response.json();
 
-      console.log('Response Status:', response.status);
-      console.log('Response Body:', result);
-
       if (!result.success) {
         showMessage(result.message || 'Sign up failed.', false);
-        isSubmitting = false;
-        return;
-      } else if (result.success) {
+      } else {
         showMessage(result.message || 'Sign up successful!', true);
-
         signupForm.reset();
 
         // Redirect after successful signup
@@ -204,7 +192,9 @@ export function initSignupValidation() {
     } catch (error) {
       console.error('Signup error:', error);
       showMessage('An unexpected error occurred. Please try again.', false);
+    } finally {
       isSubmitting = false;
+      submitButton.disabled = false;
     }
   });
 }
