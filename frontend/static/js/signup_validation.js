@@ -20,31 +20,6 @@ export function initSignupValidation() {
     return feedbackElement;
   }
 
-  // Debounce function to prevent excessive calls
-  function debounce(func, delay) {
-    let timeout;
-    return (...args) => {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => func(...args), delay);
-    };
-  }
-
-  // Check availability of nickname and email
-  async function checkAvailability(field, value) {
-    if (!value.trim()) return null;
-
-    try {
-      const response = await fetch(
-        `/api/validate?${field}=${encodeURIComponent(value)}`
-      );
-      const data = await response.json();
-      return data.available;
-    } catch (error) {
-      console.error('Error validating input:', error);
-      return null;
-    }
-  }
-
   if (nickNameInput) {
     const nickNameFeedback = createFeedbackElement(nickNameInput.parentNode);
 
@@ -83,6 +58,31 @@ export function initSignupValidation() {
     );
   }
 
+  // Check availability of nickname and email
+  async function checkAvailability(field, value) {
+    if (!value.trim()) return null;
+
+    try {
+      const response = await fetch(
+        `/api/validate?${field}=${encodeURIComponent(value)}`
+      );
+      const data = await response.json();
+      return data.available;
+    } catch (error) {
+      console.error('Error validating input:', error);
+      return null;
+    }
+  }
+
+  // Debounce function to prevent excessive calls
+  function debounce(func, delay) {
+    let timeout;
+    return (...args) => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func(...args), delay);
+    };
+  }
+
   // Password strength validation
   function validatePasswordStrength(password) {
     if (password.length < 8) return 'Must contain at least 8 characters.';
@@ -114,7 +114,8 @@ export function initSignupValidation() {
 
   // Password visibility toggle
   document.querySelectorAll('.toggle-password-visibility').forEach((button) => {
-    button.addEventListener('click', () => {
+    button.addEventListener('click', (e) => {
+      e.preventDefault();
       const input = document.getElementById(button.dataset.target);
       input.type = input.type === 'password' ? 'text' : 'password';
     });
