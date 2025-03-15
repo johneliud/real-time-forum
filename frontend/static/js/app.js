@@ -96,11 +96,3 @@ class Router {
   }
 }
 
-// Renders the home view of the application.
-homeView();
-
-// Function to render the sign up view.
-signUpView();
-
-// Function to render the sign in view.
-signInView();

@@ -9,7 +9,7 @@ export async function signUpView() {
       <p class="message-popup" id="message-popup"></p>
       <div class="form-container">
           <h2>Sign Up</h2>
-          <form id="signup-form" novalidate>
+          <form action="/sign-up" id="signup-form" method="POST" >
               <div class="user-names">
                   <div class="input-group">
                       <label for="first-name">First Name</label>

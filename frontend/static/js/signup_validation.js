@@ -2,12 +2,6 @@ import { showMessage } from "./script.js";
 
 export function initSignupValidation() {
   const signupForm = document.getElementById("signup-form");
-  const messagePopup = document.getElementById("message-popup");
-
-  if (!signupForm || !messagePopup) {
-    console.error("Required elements not found");
-    return;
-  }
 
   const firstNameInput = document.getElementById("first-name");
   const lastNameInput = document.getElementById("last-name");
@@ -26,16 +20,80 @@ export function initSignupValidation() {
     return feedbackElement;
   }
 
-  const nickNameFeedback = createFeedbackElement(nickNameInput.parentNode);
-  const emailFeedback = createFeedbackElement(emailInput.parentNode);
+  if (nickNameInput) {
+    const nickNameFeedback = createFeedbackElement(nickNameInput.parentNode);
+    let nickNameCheckInProgress = false;
+    let nickNameCheckTimeout = null;
 
-  // Debounce function to prevent excessive calls
-  function debounce(func, delay) {
-    let timeout;
-    return (...args) => {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => func(...args), delay);
-    };
+    nickNameInput.addEventListener("input", async () => {
+      clearTimeout(nickNameCheckTimeout);
+
+      if (!nickNameInput.value.trim()) {
+        nickNameFeedback.textContent = "";
+        return;
+      }
+
+      nickNameCheckTimeout = setTimeout(async () => {
+        // If a check is already in progress, don't start another one
+        if (nickNameCheckInProgress) return;
+
+        nickNameCheckInProgress = true;
+        try {
+          const isAvailable = await checkAvailability(
+            "nick-name",
+            nickNameInput.value
+          );
+          if (isAvailable !== null) {
+            nickNameFeedback.textContent = isAvailable
+              ? "Nickname is available"
+              : "Nickname is taken";
+            nickNameFeedback.style.color = isAvailable ? "green" : "red";
+          }
+        } catch (error) {
+          console.error("Error checking nickname availability:", error);
+        } finally {
+          nickNameCheckInProgress = false;
+        }
+      }, 1000);
+    });
+  }
+
+  if (emailInput) {
+    const emailFeedback = createFeedbackElement(emailInput.parentNode);
+    let emailCheckInProgress = false;
+    let emailCheckTimeout = null;
+
+    emailInput.addEventListener("input", async () => {
+      clearTimeout(emailCheckTimeout);
+
+      if (!emailInput.value.trim()) {
+        emailFeedback.textContent = "";
+        return;
+      }
+
+      emailCheckTimeout = setTimeout(async () => {
+        // If a check is already in progress, don't start another one
+        if (emailCheckInProgress) return;
+
+        emailCheckInProgress = true;
+        try {
+          const isAvailable = await checkAvailability(
+            "email",
+            emailInput.value
+          );
+          if (isAvailable !== null) {
+            emailFeedback.textContent = isAvailable
+              ? "Email is available"
+              : "Email is taken";
+            emailFeedback.style.color = isAvailable ? "green" : "red";
+          }
+        } catch (error) {
+          console.error("Error checking email availability:", error);
+        } finally {
+          emailCheckInProgress = false;
+        }
+      }, 1000);
+    });
   }
 
   // Check availability of nickname and email
@@ -53,36 +111,6 @@ export function initSignupValidation() {
       return null;
     }
   }
-
-  // Event listeners for availability checks
-  nickNameInput.addEventListener(
-    "input",
-    debounce(async () => {
-      const isAvailable = await checkAvailability(
-        "nick-name",
-        nickNameInput.value
-      );
-      if (isAvailable !== null) {
-        nickNameFeedback.textContent = isAvailable
-          ? "Nickname is available"
-          : "Nickname is taken";
-        nickNameFeedback.style.color = isAvailable ? "green" : "red";
-      }
-    }, 1000)
-  );
-
-  emailInput.addEventListener(
-    "input",
-    debounce(async () => {
-      const isAvailable = await checkAvailability("email", emailInput.value);
-      if (isAvailable !== null) {
-        emailFeedback.textContent = isAvailable
-          ? "Email is available"
-          : "Email is taken";
-        emailFeedback.style.color = isAvailable ? "green" : "red";
-      }
-    }, 1000)
-  );
 
   // Password strength validation
   function validatePasswordStrength(password) {
@@ -115,41 +143,67 @@ export function initSignupValidation() {
 
   // Password visibility toggle
   document.querySelectorAll(".toggle-password-visibility").forEach((button) => {
-    button.addEventListener("click", () => {
+    button.addEventListener("click", (e) => {
+      e.preventDefault();
       const input = document.getElementById(button.dataset.target);
       input.type = input.type === "password" ? "text" : "password";
     });
   });
 
+  let isSubmitting = false;
+
   // Form submission
   signupForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    // Clear previous messages
-    if (messagePopup) {
-      messagePopup.textContent = "";
-      messagePopup.classList.remove("show", "success", "error");
-    }
+    if (isSubmitting) return;
+    isSubmitting = true;
 
-    // Validate form before submission
-    if (!signupForm.checkValidity()) {
-      showMessage("Please check your form values again!", false);
-      return;
-    }
-
-    // Prepare signup data
-    const signupData = {
-      firstName: firstNameInput.value,
-      lastName: lastNameInput.value,
-      nickName: nickNameInput.value,
-      gender: genderInput.value,
-      age: parseInt(ageInput.value, 10),
-      email: emailInput.value,
-      password: passwordInput.value,
-      confirmedPassword: confirmPasswordInput.value,
-    };
+    // Disable the submit button
+    const submitButton = signupForm.querySelector('button[type="submit"]');
+    submitButton.disabled = true;
 
     try {
+      const emailAvailable = await checkAvailability("email", emailInput.value);
+      const nicknameAvailable = await checkAvailability(
+        "nick-name",
+        nickNameInput.value
+      );
+
+      if (!emailAvailable) {
+        showMessage("Email is already registered.", false);
+        isSubmitting = false;
+        submitButton.disabled = false;
+        return;
+      }
+
+      if (!nicknameAvailable) {
+        showMessage("Nickname is already taken.", false);
+        isSubmitting = false;
+        submitButton.disabled = false;
+        return;
+      }
+
+      // Validate form before submission
+      if (!signupForm.checkValidity()) {
+        showMessage("Please check your form values and try again!", false);
+        isSubmitting = false;
+        submitButton.disabled = false;
+        return;
+      }
+
+      // Prepare signup data
+      const signupData = {
+        firstName: firstNameInput.value,
+        lastName: lastNameInput.value,
+        nickName: nickNameInput.value,
+        gender: genderInput.value,
+        age: parseInt(ageInput.value, 10),
+        email: emailInput.value,
+        password: passwordInput.value,
+        confirmedPassword: confirmPasswordInput.value,
+      };
+
       const response = await fetch("/api/sign-up", {
         method: "POST",
         headers: {
@@ -160,19 +214,23 @@ export function initSignupValidation() {
 
       const result = await response.json();
 
-      if (result.success) {
+      if (!result.success) {
+        showMessage(result.message || "Sign up failed.", false);
+      } else {
         showMessage(result.message || "Sign up successful!", true);
+        signupForm.reset();
 
         // Redirect after successful signup
         setTimeout(() => {
           window.location.href = "/sign-in";
         }, 2000);
-      } else {
-        showMessage(result.message || "Sign up failed.", false);
       }
     } catch (error) {
       console.error("Signup error:", error);
       showMessage("An unexpected error occurred. Please try again.", false);
+    } finally {
+      isSubmitting = false;
+      submitButton.disabled = false;
     }
   });
 }
