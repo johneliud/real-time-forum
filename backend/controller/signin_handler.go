@@ -23,7 +23,7 @@ type SigninRequest struct {
 }
 
 func SigninHandler(w http.ResponseWriter, r *http.Request) {
-	logger.Info("Received signup request")
+	logger.Info("Received signin request")
 
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
