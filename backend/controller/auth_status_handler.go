@@ -78,7 +78,7 @@ func AuthStatusHandler(w http.ResponseWriter, r *http.Request) {
 		Message:       "Authenticated",
 	}
 	logger.Info("User %d is authenticated", userID)
-	
+
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(response)
 }

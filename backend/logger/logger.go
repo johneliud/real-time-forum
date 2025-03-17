@@ -10,7 +10,6 @@ var (
 	consoleLogger, fileLogger *slog.Logger
 )
 
-
 // NewLogger initializes the console and file loggers with the specified log level.
 func NewLogger(logFile string, level slog.Level) error {
 	var err error

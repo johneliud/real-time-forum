@@ -45,7 +45,7 @@ func fileExists(path string) bool {
 	if len(path) > 0 && path[0] == '/' {
 		cleanPath = path[1:]
 	}
-	
+
 	// Check if file exists in frontend directory
 	_, err := http.Dir("./frontend").Open(cleanPath)
 	return err == nil

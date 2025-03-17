@@ -27,8 +27,8 @@ func ValidateSignupRequest(req model.SignupRequest) error {
 
 	// Validate gender
 	validGenders := map[string]bool{
-		"male":   true,
-		"female": true,
+		"male":              true,
+		"female":            true,
 		"prefer not to say": true,
 	}
 	if !validGenders[strings.ToLower(req.Gender)] {

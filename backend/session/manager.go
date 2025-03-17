@@ -98,6 +98,7 @@ func (sm *SessionManager) cleanupExpiredSessions() {
 }
 
 type contextKey int
+
 const userIDKey contextKey = 0
 
 // SetUserContext adds the user ID to the request context.
