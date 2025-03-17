@@ -4,10 +4,11 @@ import (
 	"database/sql"
 	"encoding/json"
 	"net/http"
+	"time"
 
+	"github.com/google/uuid"
 	"github.com/johneliud/real-time-forum/backend/logger"
 	"github.com/johneliud/real-time-forum/backend/model"
-	"github.com/johneliud/real-time-forum/backend/util"
 	"github.com/johneliud/real-time-forum/database"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -92,18 +93,23 @@ func SigninHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := util.GenerateSessionToken()
+	sessionToken := uuid.New().String()
+	sessionDuration := 24 * time.Hour
+
+	// Update the user's session token in the database
+	_, err = database.DB.Exec("UPDATE users SET session_token = ? WHERE id = ?", sessionToken, user.ID)
 	if err != nil {
-		respondWithError(w, "Authentication error", http.StatusInternalServerError)
-		logger.Error("Authentication error: %v", err)
+		respondWithError(w, "Error creating session", http.StatusInternalServerError)
+		logger.Error("Error saving session to database: %v", err)
 		return
 	}
 
+	// Set the session cookie
 	http.SetCookie(w, &http.Cookie{
 		Name:     "auth_token",
-		Value:    token,
+		Value:    sessionToken,
 		Path:     "/",
-		MaxAge:   3600 * 24,
+		MaxAge:   int(sessionDuration.Seconds()),
 		HttpOnly: true,
 		Secure:   r.TLS != nil,
 		SameSite: http.SameSiteLaxMode,
