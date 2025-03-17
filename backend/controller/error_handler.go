@@ -1,35 +1,30 @@
 package controller
 
 import (
-	"log"
+	"encoding/json"
 	"net/http"
-	"text/template"
+
+	"github.com/johneliud/real-time-forum/backend/logger"
 )
 
-type ErrorPage struct {
+type ErrorResponse struct {
 	StatusCode int
 	Message    string
 }
 
-/*
-ErrorHandler parses an error template when displaying error information.
-*/
+// ErrorHandler sends an error response used to display error templates.
 func ErrorHandler(w http.ResponseWriter, message string, statusCode int) {
-	tmpl, err := template.ParseFiles("frontend/templates/error-page.html")
-	if err != nil {
-		log.Printf("Failed parsing template: %v\n", err)
-		http.Error(w, "Page Not Found", http.StatusNotFound)
-		return
-	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(statusCode)
 
-	data := ErrorPage{
+	errorResponse := ErrorResponse{
 		StatusCode: statusCode,
 		Message:    message,
 	}
 
-	if err = tmpl.Execute(w, data); err != nil {
-		log.Printf("Failed executing template: %v\n", err)
-		http.Error(w, "Something Unexpected Happened. Try Again Later", http.StatusInternalServerError)
+	if err := json.NewEncoder(w).Encode(errorResponse); err != nil {
+		logger.Error("Failed encoding JSON: %v", err)
+		http.Error(w, "An Unexpected Error Occurred. Try Again Later", http.StatusInternalServerError)
 		return
 	}
 }
