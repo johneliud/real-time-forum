@@ -3,43 +3,34 @@ body {
   place-items: center;
 }
 
-.error-container {
+.error-details {
   height: 50vh;
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-direction: column;
-  text-align: center;
 }
 
-.error-details {
-  height: 20vh;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-direction: column;
-}
-
-.error-details .status-code {
+.status-code {
   color: var(--primary-color);
   font-weight: bold;
-  font-size: 4rem;
+  font-size: 4.5rem;
 }
 
-.error-details .message {
-  font-size: 1.5rem;
+.message {
+  font-size: 2rem;
 }
 
-.error-container a {
+.back-btn {
   text-decoration: none;
   background-color: var(--primary-color);
-  padding: .5rem 1.5rem;
+  padding: 0.5rem 1.5rem;
   color: var(--text-color);
   font-weight: bold;
   border-radius: 2rem;
   transition: background-color var(--transition);
 }
 
-.error-container a:hover {
+.back-btn:hover {
   opacity: 0.8;
 }
