@@ -49,3 +49,22 @@ func (sm *SessionManager) CreateSession(userID int64, duration time.Duration) st
 	sm.sessions[sessionID] = sessionData
 	return sessionID
 }
+
+// GetUserID retrieves the user ID associated with a session.
+func (sm *SessionManager) GetUserID(sessionID string) (int64, bool) {
+	sm.mutex.RLock()
+	defer sm.mutex.RUnlock()
+
+	sessionData, exists := sm.sessions[sessionID]
+	if !exists {
+		return 0, false
+	}
+
+	// Remove session if session has expired
+	if time.Now().After(sessionData.ExpiresAt) {
+		go sm.RemoveSession(sessionID)
+		return 0, false
+	}
+
+	return sessionData.UserID, true
+}
