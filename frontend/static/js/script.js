@@ -46,8 +46,6 @@ export function toggleHamburgerMenu() {
 
   if (hamburgerMenu) {
     hamburgerMenu.addEventListener('click', () => {
-      console.log("Clicked");
-      
       hamburgerMenu.classList.toggle('active');
       menuContent.style.display =
         menuContent.style.display === 'block' ? 'none' : 'block';
