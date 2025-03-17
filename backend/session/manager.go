@@ -1,7 +1,6 @@
 package session
 
 import (
-	"context"
 	"sync"
 	"time"
 
@@ -33,4 +32,20 @@ func NewSessionManager() *SessionManager {
 	return manager
 }
 
+// CreateSession creates a new session for a user.
+func (sm *SessionManager) CreateSession(userID int64, duration time.Duration) string {
+	sm.mutex.Lock()
+	defer sm.mutex.Unlock()
 
+	sessionID := uuid.New().String()
+
+	now := time.Now()
+	sessionData := SessionData{
+		UserID:    userID,
+		CreatedAt: now,
+		ExpiresAt: now.Add(duration),
+	}
+
+	sm.sessions[sessionID] = sessionData
+	return sessionID
+}
