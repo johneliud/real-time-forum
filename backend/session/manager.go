@@ -76,3 +76,22 @@ func (sm *SessionManager) RemoveSession(sessionID string) {
 
 	delete(sm.sessions, sessionID)
 }
+
+// cleanupExpiredSessions periodically removes expired sessions.
+func (sm *SessionManager) cleanupExpiredSessions() {
+	ticker := time.NewTicker(10 * time.Minute)
+	defer ticker.Stop()
+
+	for range ticker.C {
+		sm.mutex.Lock()
+		now := time.Now()
+
+		for sessionID, sessionData := range sm.sessions {
+			if now.After(sessionData.ExpiresAt) {
+				delete(sm.sessions, sessionID)
+			}
+		}
+
+		sm.mutex.Unlock()
+	}
+}
