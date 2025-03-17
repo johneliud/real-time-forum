@@ -1,6 +1,7 @@
 package session
 
 import (
+	"context"
 	"sync"
 	"time"
 
@@ -94,4 +95,18 @@ func (sm *SessionManager) cleanupExpiredSessions() {
 
 		sm.mutex.Unlock()
 	}
+}
+
+type contextKey int
+const userIDKey contextKey = 0
+
+// SetUserContext adds the user ID to the request context.
+func SetUserContext(ctx context.Context, userID int64) context.Context {
+	return context.WithValue(ctx, userIDKey, userID)
+}
+
+// GetUserIDFromContext retrieves the user ID from the request context.
+func GetUserIDFromContext(ctx context.Context) (int64, bool) {
+	userID, ok := ctx.Value(userIDKey).(int64)
+	return userID, ok
 }
