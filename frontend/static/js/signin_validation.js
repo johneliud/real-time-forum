@@ -53,6 +53,7 @@ export function initSigninValidation() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
         },
         body: JSON.stringify(signinData),
       });
