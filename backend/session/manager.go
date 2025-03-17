@@ -68,3 +68,11 @@ func (sm *SessionManager) GetUserID(sessionID string) (int64, bool) {
 
 	return sessionData.UserID, true
 }
+
+// RemoveSession removes a session.
+func (sm *SessionManager) RemoveSession(sessionID string) {
+	sm.mutex.Lock()
+	defer sm.mutex.Unlock()
+
+	delete(sm.sessions, sessionID)
+}
