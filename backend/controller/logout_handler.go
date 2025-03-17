@@ -1,38 +1,73 @@
 package controller
 
 import (
-	"log"
+	"encoding/json"
 	"net/http"
 
+	"github.com/johneliud/real-time-forum/backend/logger"
 	"github.com/johneliud/real-time-forum/database"
 )
 
-/*
-LogoutHandler deletes the session cookie from the databse when a user logs out.
-*/
+type LogoutResponse struct {
+	Success bool   `json:"success"`
+	Message string `json:"message"`
+}
+
+// LogoutHandler handles user logout by invalidating their session.
 func LogoutHandler(w http.ResponseWriter, r *http.Request) {
-	cookie, err := r.Cookie("session_token")
-	if err != nil {
-		log.Println("Redirecting to '/sign-in'")
-		http.Redirect(w, r, "/sign-in", http.StatusSeeOther)
+	logger.Info("Logout request received")
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+
+	if r.Method == http.MethodOptions {
+		w.WriteHeader(http.StatusOK)
 		return
 	}
 
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		logger.Error("Method %q not allowed", r.Method)
+		return
+	}
+
+	// Check if the user has a session cookie
+	cookie, err := r.Cookie("auth_token")
+	if err != nil {
+		logger.Error("No auth cookie found")
+		response := LogoutResponse{
+			Success: true,
+			Message: "Already logged out",
+		}
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	// Invalidate the session by clearing it in the database
 	_, err = database.DB.Exec("UPDATE users SET session_token = NULL WHERE session_token = ?", cookie.Value)
 	if err != nil {
-		log.Printf("Failed to clear session cookie: %v\n", err)
-		ErrorHandler(w, "Something Unexpected Happened. Try Again Later", http.StatusInternalServerError)
-		return
+		logger.Error("Error clearing session from database: %v", err)
 	}
 
+	// Clear the cookie in the browser
 	http.SetCookie(w, &http.Cookie{
-		Name:     "session_token",
+		Name:     "auth_token",
 		Value:    "",
-		HttpOnly: true,
-		Secure:   true,
 		Path:     "/",
 		MaxAge:   -1,
+		HttpOnly: true,
+		Secure:   r.TLS != nil,
+		SameSite: http.SameSiteLaxMode,
 	})
 
-	http.Redirect(w, r, "/sign-in", http.StatusSeeOther)
+	response := LogoutResponse{
+		Success: true,
+		Message: "Logged out successfully",
+	}
+	logger.Info("User logged out successfully")
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(response)
 }

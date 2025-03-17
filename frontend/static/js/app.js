@@ -2,6 +2,7 @@ import { initThemeToggler, toggleHamburgerMenu } from './script.js';
 import { homeView } from './home_view.js';
 import { signUpView } from './signup_view.js';
 import { signInView } from './signin_view.js';
+import { checkAuthStatus, logout } from './auth.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   const router = new Router();
@@ -30,10 +31,25 @@ document.addEventListener('DOMContentLoaded', () => {
 // Router class to handle SPA navigation
 class Router {
   constructor() {
+    // Define routes and their authentication requirements
     this.routes = {
-      '/': homeView,
-      '/sign-up': signUpView,
-      '/sign-in': signInView,
+      '/': {
+        view: homeView,
+        requiresAuth: false
+      },
+      '/sign-up': {
+        view: signUpView,
+        requiresAuth: false
+      },
+      '/sign-in': {
+        view: signInView,
+        requiresAuth: false
+      },
+      // Add additional protected routes here
+      '/profile': {
+        view: null, // Replace with your profile view when implemented
+        requiresAuth: true
+      }
     };
   }
 
@@ -44,17 +60,35 @@ class Router {
 
   // Handles the current browser location and renders the appropriate view.
   async handleLocation() {
-    this.renderHeader();
+    // Render header first (this also checks auth status)
+    await this.renderHeader();
 
     const path = window.location.pathname;
-    const view = this.routes[path] || this.routes['/'];
+    const route = this.routes[path] || this.routes['/'];
+    
+    // Check if route requires authentication
+    if (route.requiresAuth) {
+      const { authenticated } = await checkAuthStatus();
+      if (!authenticated) {
+        // Redirect to sign-in page if not authenticated
+        history.pushState(null, null, '/sign-in');
+        // Call the view function for the sign-in page
+        await this.routes['/sign-in'].view();
+        return;
+      }
+    }
 
     // Await the result of the view function to ensure it renders correctly
-    await view();
+    if (route.view) {
+      await route.view();
+    }
   }
 
   // Renders the header element for the application.
-  renderHeader() {
+  async renderHeader() {
+    // Check authentication status to show appropriate header options
+    const { authenticated } = await checkAuthStatus();
+    
     const header = document.createElement('header');
     header.innerHTML = `
         <nav class="navbar">
@@ -73,15 +107,27 @@ class Router {
             <box-icon class="moon" name="moon"></box-icon>
           </div>
 
+          ${authenticated ? `
           <div class="user-profile">
             <box-icon name='user-circle'></box-icon>
             <p>Profile</p>
           </div>
 
           <div class="settings">
-            <box-icon name='cog'  ></box-icon>
+            <box-icon name='cog'></box-icon>
             <p>Settings</p>
           </div>
+          
+          <div class="logout" id="logout-btn">
+            <box-icon name='log-out'></box-icon>
+            <p>Logout</p>
+          </div>
+          ` : `
+          <div class="auth-links">
+            <a href="/sign-in" data-link>Sign In</a>
+            <a href="/sign-up" data-link>Sign Up</a>
+          </div>
+          `}
         </div>
       </nav>
     `;
@@ -92,6 +138,22 @@ class Router {
       app.parentNode.insertBefore(header, app);
     } else {
       document.body.appendChild(header);
+    }
+    
+    // Add logout functionality if user is authenticated
+    if (authenticated) {
+      const logoutBtn = document.getElementById('logout-btn');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', async () => {
+          const result = await logout();
+          if (result.success) {
+            // Redirect to home page after logout
+            this.navigateTo('/sign-in');
+            // Force a refresh of the application to update authentication state
+            this.handleLocation();
+          }
+        });
+      }
     }
   }
 }
