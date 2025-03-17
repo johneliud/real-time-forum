@@ -26,7 +26,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   initThemeToggler();
   router.handleLocation();
-  toggleHamburgerMenu();
 });
 
 // Router class to handle SPA navigation
@@ -80,6 +79,7 @@ class Router {
     if (route.view) {
       await route.view();
     }
+    toggleHamburgerMenu();
   }
 
   // Renders the header element for the application.
@@ -118,16 +118,12 @@ class Router {
             <p>Settings</p>
           </div>
           
-          <div class="logout" id="logout-btn">
+          <div class="log-out" id="logout-btn">
             <box-icon name='log-out'></box-icon>
             <p>Logout</p>
           </div>
           `
               : `
-          <div class="auth-links">
-            <a href="/sign-in" data-link>Sign In</a>
-            <a href="/sign-up" data-link>Sign Up</a>
-          </div>
           `
           }
         </div>
