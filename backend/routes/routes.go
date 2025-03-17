@@ -39,9 +39,8 @@ func Routes() {
 	http.Handle("/", handler)
 }
 
-// fileExists checks if the request is for a static file that exists
+// fileExists checks if the request is for a static file that exists.
 func fileExists(path string) bool {
-	// Remove leading slash
 	cleanPath := path
 	if len(path) > 0 && path[0] == '/' {
 		cleanPath = path[1:]
