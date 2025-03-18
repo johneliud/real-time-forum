@@ -26,7 +26,6 @@ export function initSigninValidation() {
     if (isSubmitting) return;
     isSubmitting = true;
 
-    // Clear previous messages
     if (messagePopup) {
       messagePopup.textContent = '';
       messagePopup.classList.remove('show', 'success', 'error');
@@ -53,29 +52,25 @@ export function initSigninValidation() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest'
+          'X-Requested-With': 'XMLHttpRequest',
         },
         body: JSON.stringify(signinData),
       });
 
       const result = await response.json();
 
-      console.log('Response Status:', response.status);
-      console.log('Response Body:', result);
-
       if (!result.success) {
         showMessage(result.message || 'Sign in failed.', false);
         isSubmitting = false;
         return;
       } else if (result.success) {
+        sessionStorage.setItem('session_token', result.sessionToken);
         showMessage(result.message || 'Sign in successful!', true);
-
         signinForm.reset();
 
-        // Redirect after successful signin
         setTimeout(() => {
           window.location.href = '/';
-        }, 2000);
+        }, 1000);
       }
     } catch (error) {
       console.error('Signin error:', error);

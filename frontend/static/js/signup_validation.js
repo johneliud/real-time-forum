@@ -223,7 +223,7 @@ export function initSignupValidation() {
         // Redirect after successful signup
         setTimeout(() => {
           window.location.href = "/sign-in";
-        }, 2000);
+        }, 1000);
       }
     } catch (error) {
       console.error("Signup error:", error);

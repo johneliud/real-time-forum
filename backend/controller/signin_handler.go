@@ -14,8 +14,9 @@ import (
 )
 
 type SigninResponse struct {
-	Success bool   `json:"success"`
-	Message string `json:"message"`
+	Success      bool   `json:"success"`
+	Message      string `json:"message"`
+	SessionToken string `json:"sessionToken"`
 }
 
 type SigninRequest struct {
@@ -119,7 +120,8 @@ func SigninHandler(w http.ResponseWriter, r *http.Request) {
 	logger.Info("User authenticated successfully")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(SigninResponse{
-		Success: true,
-		Message: "Sign in successful",
+		Success:      true,
+		Message:      "Sign in successful",
+		SessionToken: sessionToken,
 	})
 }
