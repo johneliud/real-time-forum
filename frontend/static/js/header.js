@@ -1,4 +1,4 @@
-import { checkAuthStatus, logout } from './auth.js';
+import { checkAuthStatus, logout } from "./auth.js";
 
 // Renders the header element for the application.
 export async function renderHeader(router) {
@@ -6,7 +6,7 @@ export async function renderHeader(router) {
   const { authenticated } = await checkAuthStatus();
 
   // Create header element
-  const header = document.createElement('header');
+  const header = document.createElement("header");
   header.innerHTML = `
     <nav class="navbar">
       <div class="logo"><a href="/">Real Time Forum</a></div>
@@ -54,7 +54,7 @@ export async function renderHeader(router) {
   `;
 
   // Insert the header into the DOM
-  const app = document.getElementById('app');
+  const app = document.getElementById("app");
   if (app && app.parentNode) {
     app.parentNode.insertBefore(header, app);
   } else {
@@ -63,13 +63,13 @@ export async function renderHeader(router) {
 
   // Add logout functionality if user is authenticated
   if (authenticated) {
-    const logoutBtn = document.getElementById('logout-btn');
+    const logoutBtn = document.getElementById("logout-btn");
     if (logoutBtn) {
-      logoutBtn.addEventListener('click', async () => {
+      logoutBtn.addEventListener("click", async () => {
         const result = await logout();
         if (result.success) {
           // Redirect to sign in after logout
-          router.navigateTo('/sign-in');
+          router.navigateTo("/sign-in");
           router.handleLocation();
         }
       });
@@ -77,45 +77,51 @@ export async function renderHeader(router) {
   }
 
   // Add click event listener for the inbox
-  const inbox = header.querySelector('.inbox');
+  const inbox = header.querySelector(".inbox");
   if (inbox) {
-    inbox.addEventListener('click', async () => {
-        // Create a modal for displaying messages
-        const modal = document.createElement('div');
-        modal.classList.add('chat-modal');
-        modal.innerHTML = `<div class='modal-content'>
+    inbox.addEventListener("click", async () => {
+      // Create a modal for displaying messages
+      const modal = document.createElement("div");
+      modal.classList.add("chat-modal");
+      modal.innerHTML = `<div class='modal-content'>
             <span class='close'>&times;</span>
             <h2>Chat Messages</h2>
             <div class='message-list'></div>
         </div>`;
 
-        document.body.appendChild(modal);
+      document.body.appendChild(modal);
 
-        // Fetch messages from the server
-        const response = await fetch('/api/messages');
-        if (!response.ok) {
-            console.error('Failed to fetch messages:', response.statusText);
-            return;
-        }
-        const messages = await response.json();
+      // Fetch messages from the server
+      const response = await fetch("/api/messages");
+      if (!response.ok) {
+        console.error("Failed to fetch messages:", response.statusText);
+        return;
+      }
+      const messages = await response.json();
 
-        console.log('Fetched messages:', messages);
+      console.log("Fetched messages:", messages);
 
-        const messageList = modal.querySelector('.message-list');
-        if (!messageList) {
-            console.error('Message list not found');
-            return;
-        }
-        messages.forEach(message => {
-            const messageItem = document.createElement('div');
-            messageItem.textContent = `${message.sender}: ${message.content}`;
-            messageList.appendChild(messageItem);
+      const messageList = modal.querySelector(".message-list");
+      if (!messageList) {
+        console.error("Message list not found");
+        return;
+      }
+      if (messages && messages.length > 0) {
+        messages.forEach((message) => {
+          const messageItem = document.createElement("div");
+          messageItem.textContent = `${message.sender}: ${message.content}`;
+          messageList.appendChild(messageItem);
         });
+      } else {
+        const noMessagesItem = document.createElement("div");
+        noMessagesItem.textContent = "No messages available.";
+        messageList.appendChild(noMessagesItem);
+      }
 
-        // Close modal functionality
-        modal.querySelector('.close').onclick = function() {
-            modal.remove();
-        };
+      // Close modal functionality
+      modal.querySelector(".close").onclick = function () {
+        modal.remove();
+      };
     });
   }
 }
