@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"net/http"
+	"strings"
 
 	"github.com/johneliud/real-time-forum/backend/logger"
 	"github.com/johneliud/real-time-forum/database"
@@ -35,10 +36,18 @@ func AuthStatusHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Check for auth cookie
-	cookie, err := r.Cookie("session_token")
-	if err != nil {
-		logger.Error("No session cookie found")
+	// Check for token in Authorization header
+	authHeader := r.Header.Get("Authorization")
+	var sessionToken string
+
+	if authHeader != "" && len(authHeader) > 7 && authHeader[:7] == "Bearer" {
+		sessionToken = strings.TrimSpace(authHeader[7:])
+	}
+
+	logger.Info("Session token from auth_status_handler %v", sessionToken)
+
+	if sessionToken == "" {
+		logger.Error("No session token found in authorization header")
 		response := AuthStatusResponse{
 			Authenticated: false,
 			Message:       "Not authenticated",
@@ -50,7 +59,7 @@ func AuthStatusHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Validate session in the database
 	var userID int64
-	err = database.DB.QueryRow("SELECT id FROM users WHERE session_token = ?", cookie.Value).Scan(&userID)
+	err := database.DB.QueryRow("SELECT id FROM users WHERE session_token = ?", sessionToken).Scan(&userID)
 	if err == sql.ErrNoRows {
 		logger.Error("Invalid session token")
 		response := AuthStatusResponse{
