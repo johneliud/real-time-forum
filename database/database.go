@@ -26,9 +26,7 @@ func executeSchema(DB *sql.DB) error {
 	return nil
 }
 
-/*
-InitDB installs the neccessary drivers and environment required to run the database.
-*/
+// InitDB installs the neccessary drivers and environment required to run the database.
 func InitDB() {
 	var err error
 
@@ -48,4 +46,42 @@ func InitDB() {
 		return
 	}
 	logger.Info("Database initialized successfully")
+}
+
+// InsertMessage inserts a new message into the database
+func InsertMessage(content string, sender string) error {
+	stmt, err := DB.Prepare("INSERT INTO messages(content, sender) VALUES(?, ?)")
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(content, sender)
+	return err
+}
+
+// GetMessages retrieves all messages from the database
+func GetMessages() ([]map[string]interface{}, error) {
+	rows, err := DB.Query("SELECT id, content, sender, timestamp FROM messages ORDER BY timestamp DESC")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var messages []map[string]interface{}
+	for rows.Next() {
+		var id int
+		var content, sender string
+		var timestamp string
+		if err := rows.Scan(&id, &content, &sender, &timestamp); err != nil {
+			return nil, err
+		}
+		messages = append(messages, map[string]interface{}{
+			"id":       id,
+			"content":  content,
+			"sender":   sender,
+			"timestamp": timestamp,
+		})
+	}
+	return messages, nil
 }
