@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/johneliud/real-time-forum/backend/logger"
+	"github.com/johneliud/real-time-forum/backend/model"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -77,11 +78,22 @@ func GetMessages() ([]map[string]interface{}, error) {
 			return nil, err
 		}
 		messages = append(messages, map[string]interface{}{
-			"id":       id,
-			"content":  content,
-			"sender":   sender,
+			"id":        id,
+			"content":   content,
+			"sender":    sender,
 			"timestamp": timestamp,
 		})
 	}
 	return messages, nil
+}
+
+// GetUserProfile retrieves the user's profile data based on user ID
+func GetUserProfile(userID string) (model.User, error) {
+	var user model.User
+	row := DB.QueryRow("SELECT id, firstName, lastName, nickName, gender, age, email FROM users WHERE id = ?", userID)
+	err := row.Scan(&user.ID, &user.FirstName, &user.LastName, &user.NickName, &user.Gender, &user.Age, &user.Email)
+	if err != nil {
+		return user, err
+	}
+	return user, nil
 }
