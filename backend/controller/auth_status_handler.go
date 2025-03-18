@@ -36,9 +36,9 @@ func AuthStatusHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Check for auth cookie
-	cookie, err := r.Cookie("auth_token")
+	cookie, err := r.Cookie("session_token")
 	if err != nil {
-		logger.Error("No auth cookie found")
+		logger.Error("No session cookie found")
 		response := AuthStatusResponse{
 			Authenticated: false,
 			Message:       "Not authenticated",
