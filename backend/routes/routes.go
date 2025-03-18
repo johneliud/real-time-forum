@@ -38,6 +38,9 @@ func Routes() {
 	// API endpoint to get messages
 	mux.HandleFunc("/api/messages", controller.GetMessagesHandler)
 
+	// API endpoint to get user profile data
+	mux.HandleFunc("/api/user/profile", controller.GetUserProfileHandler)
+
 	// WebSocket route
 	mux.HandleFunc("/ws", wbsocket.HandleWebSocket)
 
