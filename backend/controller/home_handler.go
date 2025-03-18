@@ -1,9 +1,11 @@
 package controller
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 	"text/template"
+	"github.com/johneliud/real-time-forum/database"
 )
 
 /*
@@ -29,4 +31,16 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		ErrorHandler(w, "Something Unexpected Happened. Try Again Later", http.StatusInternalServerError)
 		return
 	}
+}
+
+// GetMessagesHandler retrieves messages from the database and returns them as JSON
+func GetMessagesHandler(w http.ResponseWriter, r *http.Request) {
+	messages, err := database.GetMessages()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(messages)
 }
