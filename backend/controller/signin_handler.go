@@ -16,7 +16,7 @@ import (
 type SigninResponse struct {
 	Success      bool   `json:"success"`
 	Message      string `json:"message"`
-	SessionToken string `json:"session_token"`
+	SessionToken string `json:"sessionToken"`
 }
 
 type SigninRequest struct {
