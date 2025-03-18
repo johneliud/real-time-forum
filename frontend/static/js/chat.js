@@ -1,7 +1,8 @@
 export class Chat {
-  constructor() {
+  constructor(username) {
     this.messages = [];
     this.messageCount = 0;
+    this.username = username || 'Anonymous';
     this.socket = new WebSocket('ws://localhost:9000/ws');
 
     this.socket.onopen = () => {
@@ -46,7 +47,7 @@ export class Chat {
     if (content.trim()) {
       const message = { 
         content: content, 
-        sender: 'User1', 
+        sender: this.username, 
         timestamp: new Date().toLocaleTimeString() 
       }; 
       this.socket.send(JSON.stringify(message));
