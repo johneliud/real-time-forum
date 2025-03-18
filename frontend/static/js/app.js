@@ -5,6 +5,9 @@ import { signInView } from "./signin_view.js";
 import { checkAuthStatus } from "./auth.js";
 import { errorView } from "./error_view.js";
 import { renderHeader } from "./header.js";
+import { Chat } from './chat.js';
+
+let chat;
 
 document.addEventListener("DOMContentLoaded", () => {
   const router = new Router();
@@ -24,6 +27,9 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("popstate", () => {
     router.handleLocation();
   });
+
+  chat = new Chat();
+  chat.renderChat();
 
   initThemeToggler();
   router.handleLocation();
