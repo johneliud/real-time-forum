@@ -115,6 +115,7 @@ func SigninHandler(w http.ResponseWriter, r *http.Request) {
 		SameSite: http.SameSiteLaxMode,
 	})
 
+	logger.Info("Setting auth_token cookie with value: %s", sessionToken)
 	logger.Info("User authenticated successfully")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(SigninResponse{
