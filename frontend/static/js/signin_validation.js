@@ -75,7 +75,7 @@ export function initSigninValidation() {
         // Redirect after successful signin
         setTimeout(() => {
           window.location.href = '/';
-        }, 2000);
+        }, 1000);
       }
     } catch (error) {
       console.error('Signin error:', error);
