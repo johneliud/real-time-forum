@@ -14,10 +14,8 @@ func Routes() {
 	fs := http.FileServer(http.Dir("./frontend"))
 	mux.Handle("/frontend/", http.StripPrefix("/frontend/", fs))
 
-	// All routes will serve the same index.html for SPA
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/" && !(len(r.URL.Path) >= 5 && r.URL.Path[:5] == "/api/") {
-			// Check if requesting a file - if not, serve index.html
 			if !fileExists(r.URL.Path) {
 				http.ServeFile(w, r, "./frontend/templates/index.html")
 				return
@@ -26,25 +24,20 @@ func Routes() {
 		http.ServeFile(w, r, "./frontend/templates/index.html")
 	})
 
-	// API routes for authentication
 	mux.HandleFunc("/api/sign-up", controller.SignupHandler)
 	mux.HandleFunc("/api/validate", controller.ValidateInputHandler)
 	mux.HandleFunc("/api/sign-in", controller.SigninHandler)
 	mux.HandleFunc("/api/logout", controller.LogoutHandler)
 
-	// API endpoint to check authentication status
 	mux.HandleFunc("/api/auth-status", controller.AuthStatusHandler)
 
-	// API endpoint to get messages
 	mux.HandleFunc("/api/messages", controller.GetMessagesHandler)
 
-	// API endpoint to get user profile data
-	mux.HandleFunc("/api/user/profile", controller.GetUserProfileHandler)
+	mux.Handle("/api/user/profile", middleware.AuthenticateMiddleware(http.HandlerFunc(controller.GetUserProfileHandler)))
 
 	// WebSocket route
 	mux.HandleFunc("/ws", wbsocket.HandleWebSocket)
 
-	// Apply the global authentication middleware
 	handler := middleware.AuthenticateMiddleware(mux)
 	http.Handle("/", handler)
 }

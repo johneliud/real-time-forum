@@ -6,6 +6,7 @@ export async function checkAuthStatus() {
 
     const headers = {
       'X-Requested-With': 'XMLHttpRequest',
+      'Content-Type': 'application/json',
     };
 
     if (sessionToken) {
@@ -47,8 +48,8 @@ export async function logout() {
     const sessionToken = sessionStorage.getItem('session_token');
 
     const headers = {
-      'Content-Type': 'application/json',
       'X-Requested-With': 'XMLHttpRequest',
+      'Content-Type': 'application/json',
     };
 
     if (sessionToken) {
