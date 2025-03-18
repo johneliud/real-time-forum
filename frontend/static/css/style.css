@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&display=swap");
 
 :root {
   --primary-color: #023e8a;
@@ -19,7 +19,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'League Spartan', sans-serif;
+  font-family: "League Spartan", sans-serif;
 }
 
 body {
@@ -105,6 +105,7 @@ body.dark-theme .hamburger-menu .bar {
 
 .navbar .theme-toggler,
 .navbar .user-profile,
+.navbar .inbox,
 .navbar .settings,
 .navbar .log-out {
   display: flex;
@@ -183,6 +184,7 @@ body.dark-theme .menu-content box-icon {
 
 .theme-toggler,
 .user-profile,
+.inbox,
 .settings,
 .log-out {
   margin: 10px 0;
@@ -196,7 +198,9 @@ body.dark-theme .menu-content box-icon {
 
 body.dark-theme .theme-toggler,
 body.dark-theme .user-profile,
-body.dark-theme .settings {
+body.dark-theme .inbox,
+body.dark-theme .settings,
+body.dark-theme .log-out {
   border-bottom: 1px solid var(--text-color);
 }
 

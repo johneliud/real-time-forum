@@ -5,6 +5,7 @@ import (
 
 	"github.com/johneliud/real-time-forum/backend/controller"
 	"github.com/johneliud/real-time-forum/backend/middleware"
+	"github.com/johneliud/real-time-forum/backend/wbsocket"
 )
 
 func Routes() {
@@ -33,6 +34,15 @@ func Routes() {
 
 	// API endpoint to check authentication status
 	mux.HandleFunc("/api/auth-status", controller.AuthStatusHandler)
+
+	// API endpoint to get messages
+	mux.HandleFunc("/api/messages", controller.GetMessagesHandler)
+
+	// API endpoint to get user profile data
+	mux.HandleFunc("/api/user/profile", controller.GetUserProfileHandler)
+
+	// WebSocket route
+	mux.HandleFunc("/ws", wbsocket.HandleWebSocket)
 
 	// Apply the global authentication middleware
 	handler := middleware.AuthenticateMiddleware(mux)
