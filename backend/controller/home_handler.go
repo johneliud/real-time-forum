@@ -44,3 +44,18 @@ func GetMessagesHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(messages)
 }
+
+// GetUserProfileHandler retrieves the user's profile data and returns it as JSON
+func GetUserProfileHandler(w http.ResponseWriter, r *http.Request) {
+    // Assuming user ID is stored in the session or token
+    userID := r.Context().Value("userID").(string) // Adjust based on your authentication logic
+
+    userProfile, err := database.GetUserProfile(userID)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+
+    w.Header().Set("Content-Type", "application/json")
+    json.NewEncoder(w).Encode(userProfile)
+}
