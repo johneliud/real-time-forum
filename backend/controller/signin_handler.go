@@ -106,7 +106,7 @@ func SigninHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Set the session cookie
 	http.SetCookie(w, &http.Cookie{
-		Name:     "auth_token",
+		Name:     "session_token",
 		Value:    sessionToken,
 		Path:     "/",
 		MaxAge:   int(sessionDuration.Seconds()),
@@ -115,7 +115,7 @@ func SigninHandler(w http.ResponseWriter, r *http.Request) {
 		SameSite: http.SameSiteLaxMode,
 	})
 
-	logger.Info("Setting auth_token cookie with value: %s", sessionToken)
+	logger.Info("Setting session_token cookie with value: %s", sessionToken)
 	logger.Info("User authenticated successfully")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(SigninResponse{
