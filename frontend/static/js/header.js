@@ -32,6 +32,11 @@ export async function renderHeader(router) {
           <p>Profile</p>
         </div>
 
+        <div class="inbox">
+          <box-icon name='envelope'></box-icon>
+          <p>Inbox</p>
+        </div>
+
         <div class="settings">
           <box-icon name='cog'></box-icon>
           <p>Settings</p>
@@ -70,4 +75,45 @@ export async function renderHeader(router) {
       });
     }
   }
+
+  // Add click event listener for the inbox
+  const inbox = header.querySelector('.inbox');
+  inbox.addEventListener('click', async () => {
+    // Create a modal for displaying messages
+    const modal = document.createElement('div');
+    modal.classList.add('chat-modal');
+    modal.innerHTML = `<div class='modal-content'>
+        <span class='close'>&times;</span>
+        <h2>Chat Messages</h2>
+        <div class='message-list'></div>
+    </div>`;
+
+    document.body.appendChild(modal);
+
+    // Fetch messages from the server
+    const response = await fetch('/api/messages');
+    if (!response.ok) {
+        console.error('Failed to fetch messages:', response.statusText);
+        return;
+    }
+    const messages = await response.json();
+
+    console.log('Fetched messages:', messages);
+
+    const messageList = modal.querySelector('.message-list');
+    if (!messageList) {
+        console.error('Message list not found');
+        return;
+    }
+    messages.forEach(message => {
+        const messageItem = document.createElement('div');
+        messageItem.textContent = `${message.sender}: ${message.content}`;
+        messageList.appendChild(messageItem);
+    });
+
+    // Close modal functionality
+    modal.querySelector('.close').onclick = function() {
+        modal.remove();
+    };
+  });
 }
