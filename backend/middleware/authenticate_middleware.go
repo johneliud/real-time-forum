@@ -53,20 +53,20 @@ func AuthenticateMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		cookie, err := r.Cookie("auth_token")
+		cookie, err := r.Cookie("session_token")
 		if err != nil {
 			// Handle authentication failures differently based on request type
 			isXHR := r.Header.Get("X-Requested-With") == "XMLHttpRequest"
 
 			if IsAPIRoute(r.URL.Path) || isXHR {
 				// Return 401 Unauthorized for API routes or AJAX requests
-				logger.Info("No auth_token cookie found for API request, returning 401")
+				logger.Info("No session_token cookie found for API request, returning 401")
 				w.Header().Set("Content-Type", "application/json")
 				w.WriteHeader(http.StatusUnauthorized)
 				w.Write([]byte(`{"authenticated": false, "message": "Not authenticated"}`))
 			} else {
 				// For regular browser requests, handle within the SPA by serving index.html
-				logger.Info("No auth_token cookie found, serving SPA")
+				logger.Info("No session_token cookie found, serving SPA")
 				http.ServeFile(w, r, "./frontend/templates/index.html")
 			}
 			return
@@ -74,12 +74,14 @@ func AuthenticateMiddleware(next http.Handler) http.Handler {
 
 		// Verify the session token in the database
 		logger.Info("Session token received: %s", cookie.Value)
+		logger.Info("Session token from cookie: %s", cookie.Value)
 		var userID int
+		logger.Info("Verifying session token against database: %s", cookie.Value)
 		err = database.DB.QueryRow("SELECT id FROM users WHERE session_token = ?", cookie.Value).Scan(&userID)
 		if err == sql.ErrNoRows {
 			// Clear the invalid cookie
 			http.SetCookie(w, &http.Cookie{
-				Name:     "auth_token",
+				Name:     "session_token",
 				Value:    "",
 				Path:     "/",
 				MaxAge:   -1,
