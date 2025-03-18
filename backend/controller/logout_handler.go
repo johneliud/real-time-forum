@@ -34,9 +34,9 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Check if the user has a session cookie
-	cookie, err := r.Cookie("auth_token")
+	cookie, err := r.Cookie("session_token")
 	if err != nil {
-		logger.Error("No auth cookie found")
+		logger.Error("No session cookie found")
 		response := LogoutResponse{
 			Success: true,
 			Message: "Already logged out",
@@ -53,7 +53,7 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Clear the cookie in the browser
 	http.SetCookie(w, &http.Cookie{
-		Name:     "auth_token",
+		Name:     "session_token",
 		Value:    "",
 		Path:     "/",
 		MaxAge:   -1,
