@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"net/http"
-	"strings"
 
 	"github.com/johneliud/real-time-forum/backend/logger"
 	"github.com/johneliud/real-time-forum/database"
@@ -24,6 +23,7 @@ func AuthStatusHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 
 	if r.Method == http.MethodOptions {
 		w.WriteHeader(http.StatusOK)
@@ -40,8 +40,8 @@ func AuthStatusHandler(w http.ResponseWriter, r *http.Request) {
 	authHeader := r.Header.Get("Authorization")
 	var sessionToken string
 
-	if authHeader != "" && len(authHeader) > 7 && authHeader[:7] == "Bearer" {
-		sessionToken = strings.TrimSpace(authHeader[7:])
+	if authHeader != "" && len(authHeader) > 7 && authHeader[:7] == "Bearer " {
+		sessionToken = authHeader[7:]
 	}
 
 	logger.Info("Session token from auth_status_handler %v", sessionToken)
