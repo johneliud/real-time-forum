@@ -73,6 +73,7 @@ func AuthenticateMiddleware(next http.Handler) http.Handler {
 		}
 
 		// Verify the session token in the database
+		logger.Info("Session token received: %s", cookie.Value)
 		var userID int
 		err = database.DB.QueryRow("SELECT id FROM users WHERE session_token = ?", cookie.Value).Scan(&userID)
 		if err == sql.ErrNoRows {
