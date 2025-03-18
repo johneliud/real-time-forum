@@ -3,11 +3,17 @@ export async function checkAuthStatus() {
   try {
     // Retrieve session token from session storage
     const sessionToken = sessionStorage.getItem('session_token');
+
+    const headers = {
+      'X-Requested-With': 'XMLHttpRequest',
+    };
+
+    if (sessionToken) {
+      headers.Authorization = `Bearer ${sessionToken}`;
+    }
+
     const response = await fetch('/api/auth-status', {
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest',
-        Authorization: `Bearer ${sessionToken || ''}`,
-      },
+      headers: headers,
     });
 
     if (response.ok) {
@@ -39,17 +45,22 @@ export async function logout() {
   try {
     // Retrieve session token from session storage
     const sessionToken = sessionStorage.getItem('session_token');
-    const response = await fetch('/api/logout', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest',
-        Authorization: `Bearer ${sessionToken || ''}`,
-      },
+
+    const headers = {
+      'Content-Type': 'application/json',
+      'X-Requested-With': 'XMLHttpRequest',
+    };
+
+    if (sessionToken) {
+      headers.Authorization = `Bearer ${sessionToken}`;
+    }
+
+    const response = await fetch('/api/auth-status', {
+      headers: headers,
     });
 
     // Clear session storage on logout
-    sessionStorage.removeItem('session_token')
+    sessionStorage.removeItem('session_token');
 
     const data = await response.json();
     return {
