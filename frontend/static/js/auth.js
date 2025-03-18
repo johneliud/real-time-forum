@@ -1,24 +1,27 @@
 // checkAuthStatus validates the current user's authentication status.
 export async function checkAuthStatus() {
   try {
+    // Retrieve session token from session storage
+    const sessionToken = sessionStorage.getItem('session_token');
     const response = await fetch('/api/auth-status', {
       headers: {
-        'X-Requested-With': 'XMLHttpRequest'
-      }
+        'X-Requested-With': 'XMLHttpRequest',
+        Authorization: `Bearer ${sessionToken || ''}`,
+      },
     });
-    
+
     if (response.ok) {
       const data = await response.json();
       return {
         authenticated: data.authenticated,
         userId: data.userId || null,
-        message: data.message || ''
+        message: data.message || '',
       };
     } else {
       return {
         authenticated: false,
         userId: null,
-        message: 'Failed to check authentication status'
+        message: 'Failed to check authentication status',
       };
     }
   } catch (error) {
@@ -26,7 +29,7 @@ export async function checkAuthStatus() {
     return {
       authenticated: false,
       userId: null,
-      message: 'Error checking authentication status'
+      message: 'Error checking authentication status',
     };
   }
 }
@@ -34,24 +37,30 @@ export async function checkAuthStatus() {
 // Logs out the current user.
 export async function logout() {
   try {
+    // Retrieve session token from session storage
+    const sessionToken = sessionStorage.getItem('session_token');
     const response = await fetch('/api/logout', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest'
-      }
+        'X-Requested-With': 'XMLHttpRequest',
+        Authorization: `Bearer ${sessionToken || ''}`,
+      },
     });
-    
+
+    // Clear session storage on logout
+    sessionStorage.removeItem('session_token')
+
     const data = await response.json();
     return {
       success: data.success,
-      message: data.message || 'Logged out successfully'
+      message: data.message || 'Logged out successfully',
     };
   } catch (error) {
     console.error('Logout error:', error);
     return {
       success: false,
-      message: 'Error during logout'
+      message: 'Error during logout',
     };
   }
 }
@@ -59,12 +68,12 @@ export async function logout() {
 // Redirects unauthenticated users when attempting to access protected routes.
 export async function requireAuth(redirectPath = '/sign-in') {
   const { authenticated } = await checkAuthStatus();
-  
+
   if (!authenticated) {
     // If not authenticated, redirect to the specified path
     history.pushState(null, null, redirectPath);
     return false;
   }
-  
+
   return true;
 }
