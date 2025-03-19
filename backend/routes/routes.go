@@ -7,6 +7,7 @@ import (
 
 	"github.com/johneliud/real-time-forum/backend/controller"
 	"github.com/johneliud/real-time-forum/backend/middleware"
+	"github.com/johneliud/real-time-forum/backend/util"
 	"github.com/johneliud/real-time-forum/backend/wbsocket"
 )
 
@@ -23,9 +24,9 @@ func Routes() *http.ServeMux {
 	mux.HandleFunc("/api/validate", controller.ValidateInputHandler)
 	mux.HandleFunc("/api/logout", controller.LogoutHandler)
 	mux.HandleFunc("/api/auth-status", controller.AuthStatusHandler)
-	mux.HandleFunc("/api/messages", controller.GetMessagesHandler)
+	mux.HandleFunc("/api/messages", util.GetMessagesHandler)
 
-	mux.Handle("/api/profile", middleware.AuthenticateMiddleware(http.HandlerFunc(controller.GetUserProfileHandler)))
+	mux.Handle("/api/profile", middleware.AuthenticateMiddleware(http.HandlerFunc(util.GetUserProfileHandler)))
 
 	mux.HandleFunc("/ws", wbsocket.HandleWebSocket)
 	return mux
