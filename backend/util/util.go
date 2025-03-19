@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/johneliud/real-time-forum/backend/logger"
 	"github.com/johneliud/real-time-forum/database"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -24,16 +25,34 @@ func GetMessagesHandler(w http.ResponseWriter, r *http.Request) {
 
 // GetUserProfileHandler retrieves the user's profile data and returns it as JSON
 func GetUserProfileHandler(w http.ResponseWriter, r *http.Request) {
-	userID := r.Context().Value("userID").(string)
-
-	userProfile, err := database.GetUserProfile(userID)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	userID := r.Context().Value("userID")
+	if userID == nil {
+		logger.Error("User ID not found in context")
+		http.Error(w, "User ID not found in context", http.StatusUnauthorized)
 		return
 	}
 
+	user, err := database.GetUserProfile(userID.(string))
+	if err != nil {
+		logger.Error("Error fetching user profile", "err", err)
+		http.Error(w, "Error fetching user profile", http.StatusInternalServerError)
+		return
+	}
+
+	if user == nil {
+		logger.Error("User not found")
+		http.Error(w, "User not found", http.StatusNotFound)
+		return
+	}
+
+	profile := map[string]interface{}{
+		"name":         user.FirstName + " " + user.LastName,
+		"email":        user.Email,
+		"profileImage": user.ProfileImage,
+	}
+
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(userProfile)
+	json.NewEncoder(w).Encode(profile)
 }
 
 // HashPassword uses bcrypt library to hash sensitive user data before storage.
