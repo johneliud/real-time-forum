@@ -24,20 +24,22 @@ func main() {
 
 	port, err := util.ValidatePort()
 	if err != nil {
-		logger.Error("Error validating port:", err)
+		logger.Error("Error validating port", "err", err)
 		return
 	}
 
 	err = util.LoadEnv(".env")
 	if err != nil {
-		logger.Error("Failed loading .env file:", err)
+		logger.Error("Failed loading .env file", "err", err)
 		return
 	}
 
 	database.InitDB()
-	routes.Routes()
+	mux := routes.Routes()
 
-	serverMessage := fmt.Sprintf("Server started at http://localhost%v", port)
-	logger.Info(serverMessage)
-	http.ListenAndServe(port, nil)
+	logger.Info(fmt.Sprintf("Server started at http://localhost%s", port))
+	if err := http.ListenAndServe(port, mux); err != nil {
+		logger.Error("Server failed to start", "err", err)
+		return
+	}
 }
