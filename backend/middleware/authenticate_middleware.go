@@ -3,83 +3,73 @@ package middleware
 import (
 	"database/sql"
 	"net/http"
+	"strings"
 
 	"github.com/johneliud/real-time-forum/backend/controller"
 	"github.com/johneliud/real-time-forum/backend/logger"
 	"github.com/johneliud/real-time-forum/database"
 )
 
-// PublicRoutes is a list of routes that don't require authentication
 var publicRoutes = map[string]bool{
-	"/":                true,
-	"/api/sign-in":     true,
-	"/api/sign-up":     true,
-	"/api/validate":    true,
-	"/api/auth-status": true,
-	"/frontend/":       true, // Prefix match for static files
+	"/api/sign-in": true,
+	"/api/sign-up": true,
 }
 
 // IsPublicRoute checks if a route is public (doesn't require authentication).
 func IsPublicRoute(path string) bool {
-	if publicRoutes[path] {
-		return true
-	}
-
-	// Special case for static files with the /frontend/ prefix
-	if len(path) >= 10 && path[:10] == "/frontend/" {
-		return true
-	}
-
-	return false
+	return publicRoutes[path]
 }
 
 // IsAPIRoute checks if a route is an API route.
 func IsAPIRoute(path string) bool {
-	return len(path) >= 5 && path[:5] == "/api/"
+	uiRoutes := map[string]bool{
+		"/":        true,
+		"/sign-up": true,
+		"/sign-in": true,
+	}
+
+	return strings.Contains(path, "/api/") && !uiRoutes[path]
+}
+
+// sendUnauthorizedResponse writes a JSON response for unauthorized access.
+func sendUnauthorizedResponse(w http.ResponseWriter, message string) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusUnauthorized)
+	w.Write([]byte(`{"authenticated": false, "message": "` + message + `"}`))
 }
 
 // AuthenticateMiddleware ensures that a user is authenticated before accessing certain routes.
 func AuthenticateMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Handle preflight requests
 		if r.Method == http.MethodOptions {
 			next.ServeHTTP(w, r)
 			return
 		}
 
-		// Check if the requested path is public
-		if IsPublicRoute(r.URL.Path) {
+		// Skip authentication for public and WebSocket routes
+		if IsPublicRoute(r.URL.Path) || strings.HasPrefix(r.URL.Path, "/ws") {
 			next.ServeHTTP(w, r)
 			return
 		}
 
+		// Check if the request is an AJAX request
+		isXHR := r.Header.Get("X-Requested-With") == "XMLHttpRequest"
+
 		cookie, err := r.Cookie("session_token")
 		if err != nil {
-			// Handle authentication failures differently based on request type
-			isXHR := r.Header.Get("X-Requested-With") == "XMLHttpRequest"
-
 			if IsAPIRoute(r.URL.Path) || isXHR {
-				// Return 401 Unauthorized for API routes or AJAX requests
-				logger.Info("No session_token cookie found for API request, returning 401")
-				w.Header().Set("Content-Type", "application/json")
-				w.WriteHeader(http.StatusUnauthorized)
-				w.Write([]byte(`{"authenticated": false, "message": "Not authenticated"}`))
-			} else {
-				// For regular browser requests, handle within the SPA by serving index.html
-				logger.Info("No session_token cookie found, serving SPA")
-				http.ServeFile(w, r, "./frontend/templates/index.html")
+				logger.Warn("Unauthorized to access route", "path", r.URL.Path, "err", err)
+				sendUnauthorizedResponse(w, "Not authenticated")
+				return
 			}
+			http.ServeFile(w, r, "./frontend/templates/index.html")
 			return
 		}
 
-		// Verify the session token in the database
-		logger.Info("Session token received: %s", cookie.Value)
-		logger.Info("Session token from cookie: %s", cookie.Value)
 		var userID int
-		logger.Info("Verifying session token against database: %s", cookie.Value)
 		err = database.DB.QueryRow("SELECT id FROM users WHERE session_token = ?", cookie.Value).Scan(&userID)
 		if err == sql.ErrNoRows {
-			// Clear the invalid cookie
+			// Clear invalid cookie
 			http.SetCookie(w, &http.Cookie{
 				Name:     "session_token",
 				Value:    "",
@@ -90,23 +80,15 @@ func AuthenticateMiddleware(next http.Handler) http.Handler {
 				SameSite: http.SameSiteLaxMode,
 			})
 
-			// Handle invalid session differently based on request type
-			isXHR := r.Header.Get("X-Requested-With") == "XMLHttpRequest"
-
 			if IsAPIRoute(r.URL.Path) || isXHR {
-				// For API routes or AJAX requests, return 401 Unauthorized
-				logger.Warn("Invalid session token for API request, returning 401")
-				w.Header().Set("Content-Type", "application/json")
-				w.WriteHeader(http.StatusUnauthorized)
-				w.Write([]byte(`{"authenticated": false, "message": "Session expired"}`))
-			} else {
-				// For regular browser requests, handle within the SPA
-				logger.Warn("Invalid session token, serving SPA")
-				http.ServeFile(w, r, "./frontend/templates/index.html")
+				logger.Warn("Unauthorized to access route", "path", r.URL.Path, "err", err)
+				sendUnauthorizedResponse(w, "Not authenticated")
+				return
 			}
+			http.ServeFile(w, r, "./frontend/templates/index.html")
 			return
 		} else if err != nil {
-			logger.Error("Error checking session: %v", err)
+			logger.Error("Error checking session", "err", err)
 			controller.ErrorHandler(w, "Something Unexpected Happened. Try Again Later", http.StatusInternalServerError)
 			return
 		}
