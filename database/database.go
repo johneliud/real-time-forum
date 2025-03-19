@@ -88,12 +88,18 @@ func GetMessages() ([]map[string]interface{}, error) {
 }
 
 // GetUserProfile retrieves the user's profile data based on user ID
-func GetUserProfile(userID string) (model.User, error) {
+// GetUserProfile retrieves the user's profile data based on user ID
+func GetUserProfile(userID string) (*model.User, error) {
 	var user model.User
 	row := DB.QueryRow("SELECT id, firstName, lastName, nickName, gender, age, email FROM users WHERE id = ?", userID)
 	err := row.Scan(&user.ID, &user.FirstName, &user.LastName, &user.NickName, &user.Gender, &user.Age, &user.Email)
 	if err != nil {
-		return user, err
+		if err == sql.ErrNoRows {
+			logger.Error("User not found in database")
+			return nil, nil
+		}
+		logger.Error("Error fetching user profile", "err", err)
+		return nil, err
 	}
-	return user, nil
+	return &user, nil
 }
