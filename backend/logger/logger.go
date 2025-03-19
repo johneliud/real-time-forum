@@ -1,53 +1,65 @@
 package logger
 
 import (
-	"log"
+	"context"
+	"encoding/json"
 	"log/slog"
 	"os"
+	"time"
 )
 
-var (
-	consoleLogger, fileLogger *slog.Logger
-)
+type CustomHandler struct {
+	writer *os.File
+	level  slog.Level
+}
 
-// NewLogger initializes the console and file loggers with the specified log level.
-func NewLogger(logFile string, level slog.Level) error {
-	var err error
+func (h *CustomHandler) Handle(ctx context.Context, r slog.Record) error {
+	timestamp := time.Now().Format(time.RFC3339)
 
-	// Open or create the log file with appropriate permissions
-	file, err := os.OpenFile(logFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0600)
+	logEntry := map[string]interface{}{
+		"level": r.Level.String(),
+		"msg":   r.Message,
+		"time":  timestamp,
+	}
+
+	logData, err := json.Marshal(logEntry)
 	if err != nil {
-		log.Println(err)
 		return err
 	}
 
-	// Create handlers for console and file output, setting the log level
-	consoleHandler := slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: level})
-	fileHandler := slog.NewTextHandler(file, &slog.HandlerOptions{Level: level})
-
-	// Initialize the loggers with their respective handlers
-	consoleLogger = slog.New(consoleHandler)
-	fileLogger = slog.New(fileHandler)
-
-	return err
+	h.writer.Write(append(logData, '\n'))
+	os.Stdout.Write(append(logData, '\n'))
+	return nil
 }
 
-func Info(msg string, args ...any) {
-	fileLogger.Info(msg, args...)
-	consoleLogger.Info(msg, args...)
+func (h *CustomHandler) Enabled(ctx context.Context, level slog.Level) bool {
+	return level >= h.level
 }
 
-func Warn(msg string, args ...any) {
-	fileLogger.Warn(msg, args...)
-	consoleLogger.Warn(msg, args...)
+func (h *CustomHandler) WithAttrs(attrs []slog.Attr) slog.Handler {
+	return h
 }
 
-func Error(msg string, args ...any) {
-	fileLogger.Error(msg, args...)
-	consoleLogger.Error(msg, args...)
+func (h *CustomHandler) WithGroup(name string) slog.Handler {
+	return h
 }
 
-func Debug(msg string, args ...any) {
-	fileLogger.Debug(msg, args...)
-	consoleLogger.Debug(msg, args...)
+// NewLogger initializes structured logging with the custom handler
+func NewLogger(logFile string, level slog.Level) error {
+	file, err := os.OpenFile(logFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0o600)
+	if err != nil {
+		return err
+	}
+
+	handler := &CustomHandler{writer: file, level: level}
+
+	logger := slog.New(handler)
+	slog.SetDefault(logger)
+
+	return nil
 }
+
+func Info(msg string, args ...any)  { slog.Info(msg, args...) }
+func Warn(msg string, args ...any)  { slog.Warn(msg, args...) }
+func Error(msg string, args ...any) { slog.Error(msg, args...) }
+func Debug(msg string, args ...any) { slog.Debug(msg, args...) }
