@@ -1,14 +1,20 @@
 package middleware
 
 import (
+	"context"
 	"database/sql"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/johneliud/real-time-forum/backend/controller"
 	"github.com/johneliud/real-time-forum/backend/logger"
 	"github.com/johneliud/real-time-forum/database"
 )
+
+type contextKey string
+
+const userIDKey contextKey = "userID"
 
 var publicRoutes = map[string]bool{
 	"/api/sign-in": true,
@@ -92,6 +98,9 @@ func AuthenticateMiddleware(next http.Handler) http.Handler {
 			controller.ErrorHandler(w, "Something Unexpected Happened. Try Again Later", http.StatusInternalServerError)
 			return
 		}
-		next.ServeHTTP(w, r)
+
+		// Add userID to the context as a string
+		ctx := context.WithValue(r.Context(), userIDKey, strconv.Itoa(userID))
+		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
