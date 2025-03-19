@@ -130,65 +130,134 @@ export async function renderHeader(router) {
     profileDiv.addEventListener('click', async () => {
       const modal = document.createElement('div');
       modal.classList.add('profile-modal');
-      modal.innerHTML = `<div class='modal-content'>
-          <span class='close'>&times;</span>
-          <h2>User Profile</h2>
-          <div class='profile-details'></div>
-          <img id='profileImagePreview' src='' alt='Profile Image' style='display:none;' />
+
+      modal.innerHTML = `
+      <div class='modal-content'>
+        <span class='close'>&times;</span>
+        <h2>User Profile</h2>
+        
+        <div id="profileImageContainer" class="text-center">
+          <img id='profileImagePreview' src='/images/default-avatar.png' alt='Profile Image' />
+        </div>
+        
+        <div class='profile-details'>
+          <p><strong>Loading profile data...</strong></p>
+        </div>
+        
+        <div class="image-upload-container">
+          <label for="profileImage" class="custom-file-upload">
+            Choose Image
+          </label>
           <input type='file' id='profileImage' accept='image/*' />
-          <button id='uploadImage'>Upload Image</button>
-      </div>`;
+          <button id='uploadImage' disabled>Upload Image</button>
+        </div>
+      </div>
+    `;
 
-      document.getElementById('app').appendChild(modal);
+      document.body.appendChild(modal);
 
-      // Close modal on click
-      modal.querySelector('.close').onclick = function () {
+      const closeBtn = modal.querySelector('.close');
+      closeBtn.onclick = function () {
         modal.remove();
       };
 
-      // Fetch user profile data
-      const response = await fetch('/api/profile');
-      if (response.ok) {
-        const profileData = await response.json();
-        const profileDetailsDiv = modal.querySelector('.profile-details');
-        profileDetailsDiv.innerHTML = `
-          <p>Name: ${profileData.name}</p>
-          <p>Email: ${profileData.email}</p>
-        `;
-        if (profileData.profileImage) {
-          const profileImagePreview = modal.querySelector(
-            '#profileImagePreview'
-          );
-          profileImagePreview.src = profileData.profileImage;
-          profileImagePreview.style.display = 'block';
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.remove();
         }
-      } else {
-        console.error('Failed to fetch profile data');
-      }
+      });
 
-      // Handle image upload
-      const uploadButton = modal.querySelector('#uploadImage');
-      uploadButton.addEventListener('click', async () => {
-        const fileInput = modal.querySelector('#profileImage');
-        const file = fileInput.files[0];
-        if (file) {
-          const formData = new FormData();
-          formData.append('profileImage', file);
+      // Fetch user profile data
+      try {
+        const response = await fetch('/api/profile');
+        if (response.ok) {
+          const profileData = await response.json();
+          const profileDetailsDiv = modal.querySelector('.profile-details');
 
-          const uploadResponse = await fetch('/api/profile/image', {
-            method: 'POST',
-            body: formData,
-          });
+          // Display profile information
+          profileDetailsDiv.innerHTML = `
+          <p><strong>Username:</strong> ${username}</p>
+          <p><strong>Name:</strong> ${profileData.name || 'Not set'}</p>
+          <p><strong>Email:</strong> ${profileData.email || 'Not set'}</p>
+          <p><strong>Member since:</strong> ${new Date(
+            profileData.joinDate || Date.now()
+          ).toLocaleDateString()}</p>
+        `;
 
-          if (uploadResponse.ok) {
-            const result = await uploadResponse.json();
+          if (profileData.profileImage) {
             const profileImagePreview = modal.querySelector(
               '#profileImagePreview'
             );
-            profileImagePreview.src = result.profileImage;
-            profileImagePreview.style.display = 'block';
-          } else {
-            console.error('Failed to upload image');
+            profileImagePreview.src = profileData.profileImage;
+          }
+        } else {
+          console.error('Failed to fetch profile data');
+          const profileDetailsDiv = modal.querySelector('.profile-details');
+          profileDetailsDiv.innerHTML = `<p>Error loading profile data. Please try again later.</p>`;
+        }
+      } catch (error) {
+        console.error('Error fetching profile data:', error);
+      }
+
+      const fileInput = modal.querySelector('#profileImage');
+      const uploadButton = modal.querySelector('#uploadImage');
+
+      fileInput.addEventListener('change', () => {
+        const file = fileInput.files[0];
+        if (file) {
+          uploadButton.disabled = false;
+
+          // Show image preview
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const profileImagePreview = modal.querySelector(
+              '#profileImagePreview'
+            );
+            profileImagePreview.src = e.target.result;
+          };
+          reader.readAsDataURL(file);
+        } else {
+          uploadButton.disabled = true;
+        }
+      });
+
+      // Handle image upload
+      uploadButton.addEventListener('click', async () => {
+        const file = fileInput.files[0];
+        if (file) {
+          // Show loading state
+          uploadButton.textContent = 'Uploading...';
+          uploadButton.disabled = true;
+
+          const formData = new FormData();
+          formData.append('profileImage', file);
+
+          try {
+            const uploadResponse = await fetch('/api/profile/image', {
+              method: 'POST',
+              body: formData,
+            });
+
+            if (uploadResponse.ok) {
+              const result = await uploadResponse.json();
+              const profileImagePreview = modal.querySelector(
+                '#profileImagePreview'
+              );
+              profileImagePreview.src = result.profileImage;
+
+              // Show success message
+              alert('Profile image updated successfully!');
+            } else {
+              console.error('Failed to upload image');
+              alert('Failed to upload image. Please try again.');
+            }
+          } catch (error) {
+            console.error('Error uploading image:', error);
+            alert('Error uploading image. Please try again.');
+          } finally {
+            // Reset button state
+            uploadButton.textContent = 'Upload Image';
+            uploadButton.disabled = false;
           }
         }
       });
