@@ -1,10 +1,10 @@
 package wbsocket
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/gorilla/websocket"
+	"github.com/johneliud/real-time-forum/backend/logger"
 	"github.com/johneliud/real-time-forum/database"
 )
 
@@ -20,14 +20,13 @@ var clients = make(map[*websocket.Conn]bool)
 func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Println("Error during connection upgrade:", err)
+		logger.Error("Error during connection upgrade:", "err", err)
 		return
 	}
 	defer conn.Close()
 
 	// Register the new client
 	clients[conn] = true
-	log.Println("New client connected")
 
 	for {
 		var msg struct {
@@ -35,19 +34,19 @@ func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 			Sender  string `json:"sender"`
 		}
 		if err := conn.ReadJSON(&msg); err != nil {
-			log.Println("Error reading message:", err)
+			logger.Error("Error reading message:", "err", err)
 			break
 		}
 
 		// Store the message in the database
 		if err := database.InsertMessage(msg.Content, msg.Sender); err != nil {
-			log.Println("Error inserting message:", err)
+			logger.Error("Error inserting message:", "err", err)
 		}
 
 		// Broadcast the message to all connected clients
 		for client := range clients {
 			if err := client.WriteJSON(msg); err != nil {
-				log.Println("Error sending message to client:", err)
+				logger.Error("Error sending message to client:", "err", err)
 				client.Close()
 				delete(clients, client)
 			}
