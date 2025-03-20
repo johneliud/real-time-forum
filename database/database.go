@@ -33,17 +33,17 @@ func InitDB() {
 
 	DB, err = sql.Open("sqlite3", "data/real_time_forum.db")
 	if err != nil {
-		logger.Error("Failed to open database:", err)
+		logger.Error("Failed to open database", "err", err)
 		return
 	}
 
 	if err = DB.Ping(); err != nil {
-		logger.Error("Connection to database failed:", err)
+		logger.Error("Connection to database failed:", "err", err)
 		return
 	}
 
 	if err = executeSchema(DB); err != nil {
-		logger.Error("failed to execute SQL file:", err)
+		logger.Error("failed to execute SQL file:", "err", err)
 		return
 	}
 	logger.Info("Database initialized successfully")
@@ -53,6 +53,7 @@ func InitDB() {
 func InsertMessage(content string, sender string) error {
 	stmt, err := DB.Prepare("INSERT INTO messages(content, sender) VALUES(?, ?)")
 	if err != nil {
+		logger.Error("Failed to prepare statement", "err", err)
 		return err
 	}
 	defer stmt.Close()
@@ -65,6 +66,7 @@ func InsertMessage(content string, sender string) error {
 func GetMessages() ([]map[string]interface{}, error) {
 	rows, err := DB.Query("SELECT id, content, sender, timestamp FROM messages ORDER BY timestamp DESC")
 	if err != nil {
+		logger.Error("Failed to query messages", "err", err)
 		return nil, err
 	}
 	defer rows.Close()
