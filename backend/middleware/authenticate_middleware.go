@@ -3,6 +3,7 @@ package middleware
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -47,13 +48,7 @@ func sendUnauthorizedResponse(w http.ResponseWriter, message string) {
 // AuthenticateMiddleware ensures that a user is authenticated before accessing certain routes.
 func AuthenticateMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == http.MethodOptions {
-			next.ServeHTTP(w, r)
-			return
-		}
-
-		// Skip authentication for public and WebSocket routes
-		if IsPublicRoute(r.URL.Path) || strings.HasPrefix(r.URL.Path, "/ws") {
+		if r.Method == http.MethodOptions || IsPublicRoute(r.URL.Path) || strings.HasPrefix(r.URL.Path, "/ws") {
 			next.ServeHTTP(w, r)
 			return
 		}
@@ -101,6 +96,7 @@ func AuthenticateMiddleware(next http.Handler) http.Handler {
 
 		// Add userID to the context as a string
 		ctx := context.WithValue(r.Context(), userIDKey, strconv.Itoa(userID))
+		fmt.Println("ctx value:", ctx)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
