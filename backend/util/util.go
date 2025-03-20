@@ -11,6 +11,10 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+type contextKey string
+
+const UserIDKey contextKey = "userID"
+
 // GetMessagesHandler retrieves messages from the database and returns them as JSON
 func GetMessagesHandler(w http.ResponseWriter, r *http.Request) {
 	messages, err := database.GetMessages()
@@ -25,7 +29,7 @@ func GetMessagesHandler(w http.ResponseWriter, r *http.Request) {
 
 // GetUserProfileHandler retrieves the user's profile data and returns it as JSON
 func GetUserProfileHandler(w http.ResponseWriter, r *http.Request) {
-	userID := r.Context().Value("userID")
+	userID := r.Context().Value(UserIDKey)
 	if userID == nil {
 		logger.Error("User ID not found in context")
 		http.Error(w, "User ID not found in context", http.StatusUnauthorized)
