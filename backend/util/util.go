@@ -38,7 +38,7 @@ func GetUserProfileHandler(w http.ResponseWriter, r *http.Request) {
 
 	user, err := database.GetUserProfile(userID.(string))
 	if err != nil {
-		logger.Error("Error fetching user profile", "err", err)
+		logger.Error("Error fetching user profile this place", "err", err)
 		http.Error(w, "Error fetching user profile", http.StatusInternalServerError)
 		return
 	}
