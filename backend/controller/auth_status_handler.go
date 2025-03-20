@@ -44,8 +44,6 @@ func AuthStatusHandler(w http.ResponseWriter, r *http.Request) {
 		sessionToken = authHeader[7:]
 	}
 
-	logger.Info("Session token from auth_status_handler %v", sessionToken)
-
 	if sessionToken == "" {
 		logger.Error("No session token found in authorization header")
 		response := AuthStatusResponse{
