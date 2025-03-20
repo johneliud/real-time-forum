@@ -1,6 +1,2 @@
-forum.db
-uploads/
-tmp/
-.air.toml
+data/
 .env
-app.log
