@@ -70,48 +70,11 @@ body.dark-theme .logo a {
   color: var(--text-color);
 }
 
-.navbar .hamburger-menu {
-  width: 40px;
-  height: 25px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  cursor: pointer;
-  position: relative;
-}
-
-.hamburger-menu .bar {
-  width: 85%;
-  height: 4px;
-  background-color: var(--dark-bg-color);
-  transition: 0.4s;
-}
-
-body.dark-theme .hamburger-menu .bar {
-  background-color: var(--text-color);
-}
-
-.hamburger-menu.active .bar:nth-child(1) {
-  transform: translateY(10px) rotate(45deg);
-}
-
-.hamburger-menu.active .bar:nth-child(2) {
-  opacity: 0;
-}
-
-.hamburger-menu.active .bar:nth-child(3) {
-  transform: translateY(-10px) rotate(-45deg);
-}
-
 .navbar .theme-toggler,
 .navbar .user-profile,
 .navbar .inbox,
 .navbar .settings,
 .navbar .log-out {
-  display: flex;
-  align-items: center;
-  justify-content: left;
-  column-gap: 0.5rem;
   cursor: pointer;
   font-size: 1rem;
   font-weight: bold;
@@ -132,10 +95,6 @@ body.dark-theme .theme-toggler span {
   background-color: var(--text-color);
   color: var(--dark-bg-color);
 }
-
-/* .theme-toggler:hover span {
-  display: flex;
-} */
 
 .theme-toggler box-icon {
   fill: var(--dark-bg-color);
@@ -162,45 +121,15 @@ body.dark-theme .moon {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: var(--text-color);
-  box-shadow: var(--light-box-shadow);
-  padding: 1rem;
-  row-gap: 2.5rem;
+  padding: 1rem 2rem;
   border-radius: 5px;
   text-align: left;
   transition: var(--transition);
 }
 
-body.dark-theme .menu-content {
-  background-color: var(--dark-bg-color);
-  box-shadow: var(--dark-box-shadow);
-}
-
 body.dark-theme .menu-content box-icon {
   color: var(--text-color);
   fill: var(--text-color);
-}
-
-.theme-toggler,
-.user-profile,
-.inbox,
-.settings,
-.log-out {
-  margin: 10px 0;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  min-height: 7.5vh;
-  border-bottom: 1px solid var(--dark-bg-color);
-}
-
-body.dark-theme .theme-toggler,
-body.dark-theme .user-profile,
-body.dark-theme .inbox,
-body.dark-theme .settings,
-body.dark-theme .log-out {
-  border-bottom: 1px solid var(--text-color);
 }
 
 main {
