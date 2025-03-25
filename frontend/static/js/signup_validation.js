@@ -34,7 +34,6 @@ export function initSignupValidation() {
       }
 
       nickNameCheckTimeout = setTimeout(async () => {
-        // If a check is already in progress, don't start another one
         if (nickNameCheckInProgress) return;
 
         nickNameCheckInProgress = true;
@@ -72,7 +71,6 @@ export function initSignupValidation() {
       }
 
       emailCheckTimeout = setTimeout(async () => {
-        // If a check is already in progress, don't start another one
         if (emailCheckInProgress) return;
 
         emailCheckInProgress = true;
