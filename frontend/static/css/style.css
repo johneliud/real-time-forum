@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&display=swap');
 
 :root {
   --primary-color: #023e8a;
@@ -19,7 +19,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "League Spartan", sans-serif;
+  font-family: 'League Spartan', sans-serif;
 }
 
 body {
@@ -60,7 +60,7 @@ body.dark-theme .navbar {
 }
 
 .navbar .logo a {
-  font-size: 2rem;
+  font-size: 1.5rem;
   text-decoration: none;
   color: var(--primary-color);
   font-weight: bold;
@@ -70,78 +70,12 @@ body.dark-theme .logo a {
   color: var(--text-color);
 }
 
-.navbar .hamburger-menu {
-  width: 40px;
-  height: 25px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  cursor: pointer;
-  position: relative;
-}
-
-.hamburger-menu .bar {
-  width: 85%;
-  height: 4px;
-  background-color: var(--dark-bg-color);
-  transition: 0.4s;
-}
-
-body.dark-theme .hamburger-menu .bar {
-  background-color: var(--text-color);
-}
-
-.hamburger-menu.active .bar:nth-child(1) {
-  transform: translateY(10px) rotate(45deg);
-}
-
-.hamburger-menu.active .bar:nth-child(2) {
-  opacity: 0;
-}
-
-.hamburger-menu.active .bar:nth-child(3) {
-  transform: translateY(-10px) rotate(-45deg);
-}
-
-.navbar .theme-toggler,
-.navbar .user-profile,
-.navbar .inbox,
-.navbar .settings,
-.navbar .log-out {
-  display: flex;
-  align-items: center;
-  justify-content: left;
-  column-gap: 0.5rem;
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: bold;
-  transition: var(--transition);
-}
-
-.theme-toggler span {
-  display: none;
-  font-size: 0.5rem;
-  background-color: var(--dark-bg-color);
-  color: var(--text-color);
-  padding: 0.25rem 0.5rem;
-  border-radius: 2rem;
-  transition: var(--transition);
-}
-
-body.dark-theme .theme-toggler span {
-  background-color: var(--text-color);
-  color: var(--dark-bg-color);
-}
-
-/* .theme-toggler:hover span {
-  display: flex;
-} */
-
 .theme-toggler box-icon {
   fill: var(--dark-bg-color);
 }
 
-body.dark-theme .theme-toggler box-icon {
+body.dark-theme .theme-toggler box-icon,
+body.dark-theme .menu-content box-icon {
   fill: var(--text-color);
 }
 
@@ -158,50 +92,49 @@ body.dark-theme .moon {
 }
 
 .menu-content {
-  display: none;
-  position: absolute;
-  top: 80px;
-  right: 0;
-  min-width: 25%;
-  background: var(--text-color);
-  box-shadow: var(--light-box-shadow);
-  padding: 1rem;
-  row-gap: 2.5rem;
+  width: 45%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
   border-radius: 5px;
   text-align: left;
   transition: var(--transition);
 }
 
-body.dark-theme .menu-content {
+.menu-content .tooltip-text {
+  position: absolute;
+  bottom: -1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.75rem;
   background-color: var(--dark-bg-color);
-  box-shadow: var(--dark-box-shadow);
-}
-
-body.dark-theme .menu-content box-icon {
   color: var(--text-color);
-  fill: var(--text-color);
+  padding: 0.25rem 0.5rem;
+  border-radius: 2rem;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+  white-space: nowrap;
 }
 
-.theme-toggler,
-.user-profile,
-.inbox,
-.settings,
-.log-out {
-  margin: 10px 0;
-  cursor: pointer;
+body.dark-theme .tooltip-text {
+  background-color: var(--text-color);
+  color: var(--dark-bg-color);
+}
+
+.menu-content div {
+  position: relative;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  min-height: 7.5vh;
-  border-bottom: 1px solid var(--dark-bg-color);
+  cursor: pointer;
+  transition: var(--transition);
 }
 
-body.dark-theme .theme-toggler,
-body.dark-theme .user-profile,
-body.dark-theme .inbox,
-body.dark-theme .settings,
-body.dark-theme .log-out {
-  border-bottom: 1px solid var(--text-color);
+.menu-content div:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
 }
 
 main {
@@ -212,4 +145,173 @@ main {
   justify-content: center;
   flex: 1;
   padding-top: 100px;
+}
+
+/* Profile Modal Styling */
+.profile-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  transition: var(--transition);
+}
+
+.profile-modal .modal-content {
+  background-color: var(--text-color);
+  color: var(--dark-bg-color);
+  padding: 25px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  position: relative;
+  box-shadow: var(--light-box-shadow);
+  transition: var(--transition);
+}
+
+.profile-modal .close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--secondary-color);
+  transition: color var(--transition);
+}
+
+.profile-modal .close:hover {
+  color: var(--primary-color);
+}
+
+.profile-modal h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: var(--primary-color);
+  font-size: 22px;
+  text-align: center;
+}
+
+.profile-details {
+  margin-bottom: 20px;
+}
+
+.profile-details p {
+  margin: 10px 0;
+  color: var(--dark-bg-color);
+  font-size: 16px;
+}
+
+.profile-modal #profileImagePreview {
+  display: block;
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin: 0 auto 20px;
+  border: 3px solid var(--secondary-color);
+  transition: var(--transition);
+}
+
+.profile-modal .image-upload-container {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.profile-modal .custom-file-upload {
+  display: inline-block;
+  padding: 8px 16px;
+  background-color: var(--secondary-color);
+  color: var(--text-color);
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 10px;
+  font-size: 14px;
+  transition: background-color var(--transition);
+}
+
+.profile-modal .custom-file-upload:hover {
+  background-color: var(--primary-color);
+}
+
+.profile-modal #profileImage {
+  display: none;
+}
+
+.profile-modal #uploadImage {
+  padding: 8px 16px;
+  background-color: var(--utility-color);
+  color: var(--text-color);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color var(--transition);
+}
+
+.profile-modal #uploadImage:hover {
+  background-color: var(--tertiary-color);
+}
+
+.profile-modal #uploadImage:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Dark mode support */
+body.dark-mode .profile-modal .modal-content {
+  background-color: var(--dark-bg-color);
+  color: var(--text-color);
+  box-shadow: var(--dark-box-shadow);
+}
+
+body.dark-mode .profile-modal h2 {
+  color: var(--utility-color);
+}
+
+body.dark-mode .profile-modal .profile-details p {
+  color: var(--text-color);
+}
+
+body.dark-mode .profile-modal .close {
+  color: var(--text-color);
+}
+
+body.dark-mode .profile-modal .close:hover {
+  color: var(--utility-color);
+}
+
+body.dark-mode .profile-modal #profileImagePreview {
+  border-color: var(--secondary-color);
+}
+
+/* Loading state for upload button */
+.profile-modal #uploadImage.loading {
+  background-color: var(--secondary-color);
+  position: relative;
+}
+
+.profile-modal #uploadImage.loading::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  top: 50%;
+  right: 10px;
+  margin-top: -10px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  border-top-color: var(--text-color);
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }

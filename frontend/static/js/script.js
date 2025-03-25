@@ -39,16 +39,3 @@ export function showMessage(message, isSuccess) {
     messagePopup.classList.remove('show', 'success', 'error');
   }, 3000);
 }
-
-export function toggleHamburgerMenu() {
-  const hamburgerMenu = document.querySelector('.hamburger-menu');
-  const menuContent = document.querySelector('.menu-content');
-
-  if (hamburgerMenu) {
-    hamburgerMenu.addEventListener('click', () => {
-      hamburgerMenu.classList.toggle('active');
-      menuContent.style.display =
-        menuContent.style.display === 'block' ? 'none' : 'block';
-    });
-  }
-}

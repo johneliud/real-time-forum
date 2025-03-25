@@ -31,19 +31,19 @@ func executeSchema(DB *sql.DB) error {
 func InitDB() {
 	var err error
 
-	DB, err = sql.Open("sqlite3", "data/forum.db")
+	DB, err = sql.Open("sqlite3", "data/real_time_forum.db")
 	if err != nil {
-		logger.Error("Failed to open database:", err)
+		logger.Error("Failed to open database", "err", err)
 		return
 	}
 
 	if err = DB.Ping(); err != nil {
-		logger.Error("Connection to database failed:", err)
+		logger.Error("Connection to database failed:", "err", err)
 		return
 	}
 
 	if err = executeSchema(DB); err != nil {
-		logger.Error("failed to execute SQL file:", err)
+		logger.Error("failed to execute SQL file:", "err", err)
 		return
 	}
 	logger.Info("Database initialized successfully")
@@ -53,6 +53,7 @@ func InitDB() {
 func InsertMessage(content string, sender string) error {
 	stmt, err := DB.Prepare("INSERT INTO messages(content, sender) VALUES(?, ?)")
 	if err != nil {
+		logger.Error("Failed to prepare statement", "err", err)
 		return err
 	}
 	defer stmt.Close()
@@ -65,6 +66,7 @@ func InsertMessage(content string, sender string) error {
 func GetMessages() ([]map[string]interface{}, error) {
 	rows, err := DB.Query("SELECT id, content, sender, timestamp FROM messages ORDER BY timestamp DESC")
 	if err != nil {
+		logger.Error("Failed to query messages", "err", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -88,12 +90,18 @@ func GetMessages() ([]map[string]interface{}, error) {
 }
 
 // GetUserProfile retrieves the user's profile data based on user ID
-func GetUserProfile(userID string) (model.User, error) {
+func GetUserProfile(userID string) (*model.User, error) {
 	var user model.User
-	row := DB.QueryRow("SELECT id, firstName, lastName, nickName, gender, age, email FROM users WHERE id = ?", userID)
+
+	row := DB.QueryRow("SELECT id, first_name, last_name, nick_name, gender, age, email FROM users WHERE id = ?", userID)
 	err := row.Scan(&user.ID, &user.FirstName, &user.LastName, &user.NickName, &user.Gender, &user.Age, &user.Email)
 	if err != nil {
-		return user, err
+		if err == sql.ErrNoRows {
+			logger.Error("User not found in database", "err", err)
+			return nil, nil
+		}
+		logger.Error("Error fetching user profile", "err", err)
+		return nil, err
 	}
-	return user, nil
+	return &user, nil
 }
