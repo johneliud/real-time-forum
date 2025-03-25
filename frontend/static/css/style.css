@@ -101,43 +101,39 @@ body.dark-theme .moon {
   transition: var(--transition);
 }
 
-.menu-content span {
-  display: none;
-  font-size: 0.5rem;
+.menu-content .tooltip-text {
+  position: absolute;
+  bottom: -1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.75rem;
   background-color: var(--dark-bg-color);
   color: var(--text-color);
   padding: 0.25rem 0.5rem;
   border-radius: 2rem;
-  transition: var(--transition);
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+  white-space: nowrap;
 }
 
-body.dark-theme .menu-content span {
+body.dark-theme .tooltip-text {
   background-color: var(--text-color);
   color: var(--dark-bg-color);
 }
 
-body.dark-theme .menu-content box-icon {
-  color: var(--text-color);
-  fill: var(--text-color);
-}
-
-.menu-content .theme-toggler,
-.menu-content .user-profile,
-.menu-content .inbox,
-.menu-content .settings,
-.menu-content .log-out {
+.menu-content div {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   cursor: pointer;
-  font-size: 1rem;
-  font-weight: bold;
   transition: var(--transition);
 }
 
-.menu-content .theme-toggler:hover span,
-.menu-content .user-profile:hover span,
-.menu-content .inbox:hover span,
-.menu-content .settings:hover span,
-.menu-content .log-out:hover span {
-  display: block;
+.menu-content div:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
 }
 
 main {
