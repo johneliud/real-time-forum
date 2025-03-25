@@ -1,4 +1,4 @@
-import { initThemeToggler, toggleHamburgerMenu } from "./script.js";
+import { initThemeToggler } from "./script.js";
 import { homeView } from "./home_view.js";
 import { signUpView } from "./signup_view.js";
 import { signInView } from "./signin_view.js";
@@ -86,6 +86,5 @@ class Router {
     if (route.view) {
       await route.view();
     }
-    toggleHamburgerMenu();
   }
 }
