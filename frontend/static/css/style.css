@@ -158,11 +158,10 @@ body.dark-theme .moon {
 }
 
 .menu-content {
-  display: none;
-  position: absolute;
-  top: 80px;
-  right: 0;
-  min-width: 25%;
+  width: 50%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   background: var(--text-color);
   box-shadow: var(--light-box-shadow);
   padding: 1rem;
