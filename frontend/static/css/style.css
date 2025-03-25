@@ -74,7 +74,8 @@ body.dark-theme .logo a {
   fill: var(--dark-bg-color);
 }
 
-body.dark-theme .theme-toggler box-icon {
+body.dark-theme .theme-toggler box-icon,
+body.dark-theme .menu-content box-icon {
   fill: var(--text-color);
 }
 
@@ -91,7 +92,7 @@ body.dark-theme .moon {
 }
 
 .menu-content {
-  width: 50%;
+  width: 45%;
   display: flex;
   justify-content: space-between;
   align-items: center;
