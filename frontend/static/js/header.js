@@ -12,12 +12,6 @@ export async function renderHeader(router) {
       <div class="logo"><a href="/">Real Time Forum</a></div>
 
       <div class="menu-content">
-        <div class="theme-toggler">
-          <span class="tooltip-text">Toggle Mode</span>
-          <box-icon class="sun" name="sun"></box-icon>
-          <box-icon class="moon" name="moon"></box-icon>
-        </div>
-
         ${
           authenticated
             ? `
@@ -36,8 +30,36 @@ export async function renderHeader(router) {
         <div class="log-out" id="logout-btn">
           <box-icon name='log-out'></box-icon>
         </div>
+
+        <div class="theme-toggler">
+          <span class="tooltip-text">Toggle Mode</span>
+          <box-icon class="sun" name="sun"></box-icon>
+          <box-icon class="moon" name="moon"></box-icon>
+        </div>
         `
-            : ``
+            : `
+        <div style="visibility: none; opacity: 0;" class="user-profile">
+          <box-icon name='user-circle'></box-icon>
+        </div>
+
+        <div style="visibility: none; opacity: 0;" class="inbox">
+          <box-icon name='envelope'></box-icon>
+        </div>
+
+        <div style="visibility: none; opacity: 0;" class="settings">
+          <box-icon name='cog'></box-icon>
+        </div>
+        
+        <div style="visibility: none; opacity: 0;" class="log-out" id="logout-btn">
+          <box-icon name='log-out'></box-icon>
+        </div>
+
+        <div class="theme-toggler">
+          <span class="tooltip-text">Toggle Mode</span>
+          <box-icon class="sun" name="sun"></box-icon>
+          <box-icon class="moon" name="moon"></box-icon>
+        </div>
+            `
         }
       </div>
     </nav>
