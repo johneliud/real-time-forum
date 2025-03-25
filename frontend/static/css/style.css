@@ -121,7 +121,7 @@ body.dark-theme .moon {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 2rem;
+  padding: 1rem 0;
   border-radius: 5px;
   text-align: left;
   transition: var(--transition);
