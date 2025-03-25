@@ -11,12 +11,6 @@ export async function renderHeader(router) {
     <nav class="navbar">
       <div class="logo"><a href="/">Real Time Forum</a></div>
 
-      <div class="hamburger-menu">
-        <div class="bar"></div>
-        <div class="bar"></div>
-        <div class="bar"></div>
-      </div>
-
       <div class="menu-content">
         <div class="theme-toggler">
           <span class="tooltip-text">Toggle Mode</span>
@@ -29,22 +23,18 @@ export async function renderHeader(router) {
             ? `
         <div class="user-profile">
           <box-icon name='user-circle'></box-icon>
-          <p>Profile</p>
         </div>
 
         <div class="inbox">
           <box-icon name='envelope'></box-icon>
-          <p>Inbox</p>
         </div>
 
         <div class="settings">
           <box-icon name='cog'></box-icon>
-          <p>Settings</p>
         </div>
         
         <div class="log-out" id="logout-btn">
           <box-icon name='log-out'></box-icon>
-          <p>Logout</p>
         </div>
         `
             : ``
