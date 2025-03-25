@@ -16,46 +16,54 @@ export async function renderHeader(router) {
           authenticated
             ? `
         <div class="user-profile">
+          <span class="tooltip-text">Profile</span>
           <box-icon name='user-circle'></box-icon>
         </div>
 
         <div class="inbox">
+          <span class="tooltip-text">Inbox</span>
           <box-icon name='envelope'></box-icon>
         </div>
 
         <div class="settings">
+          <span class="tooltip-text">Settings</span>
           <box-icon name='cog'></box-icon>
         </div>
         
         <div class="log-out" id="logout-btn">
+          <span class="tooltip-text">Log Out</span>
           <box-icon name='log-out'></box-icon>
         </div>
 
         <div class="theme-toggler">
-          <span class="tooltip-text">Toggle Mode</span>
+          <span class="tooltip-text">Toggle Theme</span>
           <box-icon class="sun" name="sun"></box-icon>
           <box-icon class="moon" name="moon"></box-icon>
         </div>
         `
             : `
         <div style="visibility: none; opacity: 0;" class="user-profile">
+          <span class="tooltip-text">Profile</span>
           <box-icon name='user-circle'></box-icon>
         </div>
 
         <div style="visibility: none; opacity: 0;" class="inbox">
+          <span class="tooltip-text">Inbox</span>
           <box-icon name='envelope'></box-icon>
         </div>
 
         <div style="visibility: none; opacity: 0;" class="settings">
+          <span class="tooltip-text">Settings</span>
           <box-icon name='cog'></box-icon>
         </div>
         
         <div style="visibility: none; opacity: 0;" class="log-out" id="logout-btn">
+          <span class="tooltip-text">Log Out</span>
           <box-icon name='log-out'></box-icon>
         </div>
 
         <div class="theme-toggler">
-          <span class="tooltip-text">Toggle Mode</span>
+          <span class="tooltip-text">Toggle Theme</span>
           <box-icon class="sun" name="sun"></box-icon>
           <box-icon class="moon" name="moon"></box-icon>
         </div>
