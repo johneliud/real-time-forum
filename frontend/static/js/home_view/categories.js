@@ -7,7 +7,6 @@ export async function categoriesView() {
     <h2>Filter By:</h2>
       <form class="filter-form" action="/filter" method="get">
         <fieldset>
-          <legend>Categories</legend>
           <label
             ><input type="checkbox" name="category" value="Technology" />
             Technology</label
@@ -55,10 +54,10 @@ export async function categoriesView() {
       <form class="filter-form" action="/filter" method="get">
         <ul class="sidebar-links">
           <li>
-            <button type="submit" name="filter" value="created">Created</button>
+            <button type="submit" name="filter" value="created">Created Posts</button>
           </li>
           <li>
-            <button type="submit" name="filter" value="liked">Liked</button>
+            <button type="submit" name="filter" value="liked">Liked Posts</button>
           </li>
         </ul>
       </form>
