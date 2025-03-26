@@ -1,4 +1,4 @@
-import { showMessage } from "./script.js";
+import { showMessage } from "../script.js";
 
 export function initSignupValidation() {
   const signupForm = document.getElementById("signup-form");
