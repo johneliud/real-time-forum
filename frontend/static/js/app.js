@@ -1,5 +1,5 @@
 import { initThemeToggler } from './script.js';
-import { homeView } from './home_view.js';
+import { homeView } from './home_view/home_view.js';
 import { signUpView } from './sign_up/signup_view.js';
 import { signInView } from './sign_in/signin_view.js';
 import { checkAuthStatus } from './auth/auth.js';
