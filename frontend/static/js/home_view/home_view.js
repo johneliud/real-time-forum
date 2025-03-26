@@ -6,6 +6,7 @@ export async function homeView() {
 
   const aside = document.createElement('aside');
   aside.id = 'sidebar';
+  aside.className = 'sidebar';
 
   app.parentNode.insertBefore(aside, app);
 
