@@ -4,10 +4,15 @@ import { categoriesView } from './categories.js';
 export async function homeView() {
   const app = document.getElementById('app');
 
-  // Set the inner HTML of the app element to display the home view content
-  app.innerHTML = `
-          <aside id="sidebar" class="sidebar"></aside>
-  `;
+  const aside = document.createElement('aside');
+  aside.id = 'sidebar';
+
+  app.parentNode.insertBefore(aside, app);
 
   categoriesView();
+
+  // Set the inner HTML of the app element to display the home view content
+  app.innerHTML = `
+          <h1>Real Time Forum</h1>
+  `;
 }
