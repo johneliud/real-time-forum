@@ -1,4 +1,4 @@
-import { showMessage } from './script.js';
+import { showMessage } from '../script.js';
 
 export function initSigninValidation() {
   const signinForm = document.getElementById('signin-form');
