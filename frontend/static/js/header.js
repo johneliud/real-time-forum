@@ -1,4 +1,4 @@
-import { checkAuthStatus, logout } from './auth.js';
+import { checkAuthStatus, logout } from './auth/auth.js';
 
 // Renders the header element for the application.
 export async function renderHeader(router) {
