@@ -1,11 +1,10 @@
 // Renders the categories view of the application.
 export async function categoriesView() {
-  const app = document.getElementById('app');
+  const sidebar = document.getElementById('sidebar');
 
-  // Set the inner HTML of the app element to display the categories view content
-  app.innerHTML = `
-  <aside class="sidebar">
-      <h2>Filter By:</h2>
+  if (sidebar) {
+    sidebar.innerHTML = `
+    <h2>Filter By:</h2>
       <form class="filter-form" action="/filter" method="get">
         <fieldset>
           <legend>Categories</legend>
@@ -63,6 +62,6 @@ export async function categoriesView() {
           </li>
         </ul>
       </form>
-    </aside>
-  `;
+    `;
+  }
 }
