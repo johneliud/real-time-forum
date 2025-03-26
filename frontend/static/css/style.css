@@ -22,11 +22,16 @@
   font-family: 'League Spartan', sans-serif;
 }
 
+html {
+  height: 100%;
+}
+
 body {
   background-color: var(--text-color);
   color: var(--bg-color);
   transition: var(--transition);
   height: 100vh;
+  padding-top: 85px;
   display: grid;
   grid-template-columns: 1fr 2fr 1fr;
   grid-template-rows: auto 1fr;
@@ -139,16 +144,6 @@ body.dark-theme .tooltip-text {
 .menu-content div:hover .tooltip-text {
   visibility: visible;
   opacity: 1;
-}
-
-main {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  flex: 1;
-  padding-top: 90px;
 }
 
 .sidebar {
