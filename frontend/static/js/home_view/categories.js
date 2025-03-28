@@ -1,6 +1,6 @@
 // Renders the categories view of the application.
 export async function categoriesView() {
-  const sidebar = document.getElementById('sidebar');
+  const sidebar = document.getElementById("sidebar");
 
   if (sidebar) {
     sidebar.innerHTML = `
