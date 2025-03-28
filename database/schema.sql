@@ -12,6 +12,36 @@ CREATE TABLE IF NOT EXISTS users (
     profile_image TEXT
 );
 
+CREATE TABLE IF NOT EXISTS posts (
+  id INTEGER PRIMARY KEY,
+  user_id INTEGER NOT NULL,
+  post_title TEXT,
+  body TEXT,
+  parent_id INTEGER DEFAULT NULL,
+  created_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  post_status TEXT DEFAULT 'visible',
+  media_url TEXT DEFAULT '', 
+  FOREIGN KEY (user_id) REFERENCES users (id),
+  FOREIGN KEY (parent_id) REFERENCES posts (id)
+);
+
+CREATE TABLE IF NOT EXISTS post_categories (
+  id INTEGER PRIMARY KEY,
+  post_id INTEGER NOT NULL,
+  category TEXT,
+  FOREIGN KEY (post_id) REFERENCES posts (id)
+);
+
+CREATE TABLE IF NOT EXISTS reactions (
+  id INTEGER PRIMARY KEY,
+  reaction TEXT,
+  reaction_status TEXT DEFAULT 'clicked',
+  user_id INTEGER NOT NULL,
+  post_id INTEGER NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES users (id),
+  FOREIGN KEY (post_id) REFERENCES posts (id)
+);
+
 CREATE TABLE IF NOT EXISTS messages (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     content TEXT NOT NULL,
