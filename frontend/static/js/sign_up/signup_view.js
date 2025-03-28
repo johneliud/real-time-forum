@@ -1,11 +1,17 @@
-import { initSignupValidation } from './signup_validation.js';
+import { initSignupValidation } from "./signup_validation.js";
 
 // Function to render the sign up view.
 export async function signUpView() {
-  const app = document.getElementById('app');
+  const styleLink = document.createElement("link");
+  styleLink.rel = "stylesheet";
+  styleLink.href = "/frontend/static/css/sign-up.css";
+  document.head.appendChild(styleLink);
 
-  // Render sign up form
-  app.innerHTML = `
+  styleLink.onload = () => {
+    const app = document.getElementById("app");
+
+    // Render sign up form
+    app.innerHTML = `
       <p class="message-popup" id="message-popup"></p>
       <div class="form-container">
           <h2>Sign Up</h2>
@@ -98,10 +104,9 @@ export async function signUpView() {
               Already have an account? <a href="/sign-in" data-link>Sign In</a>
           </p>
       </div>
-  `;
+    `;
 
-  // Initialize the sign up form validation
-  setTimeout(() => {
+    // Initialize the sign up form validation
     initSignupValidation();
-  }, 0);
+  };
 }
