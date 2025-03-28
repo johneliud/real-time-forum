@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"log/slog"
 	"net/http"
 	"os"
@@ -19,18 +20,19 @@ func main() {
 
 	err = logger.NewLogger("files/app.log", slog.LevelDebug)
 	if err != nil {
-		panic(err)
+		log.Printf("Error initializing log file: %v\n", err)
+		return
 	}
 
 	port, err := util.ValidatePort()
 	if err != nil {
-		logger.Error("Error validating port", "err", err)
+		logger.Error("Error validating port:", "err", err)
 		return
 	}
 
 	err = util.LoadEnv(".env")
 	if err != nil {
-		logger.Error("Failed loading .env file", "err", err)
+		logger.Error("Failed loading .env file:", "err", err)
 		return
 	}
 
@@ -39,7 +41,7 @@ func main() {
 
 	logger.Info(fmt.Sprintf("Server started at http://localhost%s", port))
 	if err := http.ListenAndServe(port, mux); err != nil {
-		logger.Error("Server failed to start", "err", err)
+		logger.Error("Server failed to start:", "err", err)
 		return
 	}
 }
