@@ -1,7 +1,7 @@
 import { categoriesView } from "./categories.js";
 import { postCreationView } from "./post_creation.js";
 import { createPostBtn } from "./create_post_btn.js";
-import { postContainer } from "./post_container.js";
+// import { postContainer } from "./post_container.js";
 
 // Renders the home view of the application.
 export async function homeView() {
@@ -19,5 +19,5 @@ export async function homeView() {
 
   createPostBtn();
 
-  postContainer();
+  // postContainer();
 }
