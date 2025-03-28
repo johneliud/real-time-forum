@@ -7,7 +7,7 @@ export async function createPostBtn() {
         <p>Create Post</p>
         
         <button class="floating-create-post-btn">
-          <img src="frontend/static/assets/plus-solid-24.png" alt="Create Post" />
+          <img src="frontend/static/assets/plus-regular-24.png" alt="Create Post" />
         </button>
     `;
   app.appendChild(div);
