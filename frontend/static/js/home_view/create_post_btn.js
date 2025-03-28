@@ -6,9 +6,8 @@ export async function createPostBtn() {
   div.innerHTML = `
         <p>Create Post</p>
         
-
         <button class="floating-create-post-btn">
-          <box-icon name='plus' color='#ffffff' ></box-icon>
+          <img src="frontend/static/assets/plus-solid-24.png" alt="Create Post" />
         </button>
     `;
   app.appendChild(div);
