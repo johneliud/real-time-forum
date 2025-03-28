@@ -79,13 +79,15 @@ body.dark-theme .logo a {
   color: var(--text-color);
 }
 
-.theme-toggler box-icon {
+.theme-toggler img {
   fill: var(--bg-color);
 }
 
-body.dark-theme .theme-toggler box-icon,
-body.dark-theme .menu-content box-icon {
+body.dark-theme .theme-toggler img,
+body.dark-theme .menu-content img {
   fill: var(--text-color);
+  filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(0deg)
+    brightness(100%) contrast(100%);
 }
 
 .theme-toggler .sun {
@@ -385,8 +387,8 @@ body.dark-theme .create-post form label {
 .floating-create-post-btn img {
   height: 100px;
   width: 1.2rem;
-  filter: invert(100%) sepia(3%) saturate(2485%) hue-rotate(188deg)
-    brightness(112%) contrast(95%);
+  filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(0deg)
+    brightness(100%) contrast(100%);
 }
 
 body.dark-theme .floating-create-post-btn {
