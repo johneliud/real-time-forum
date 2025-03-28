@@ -1,10 +1,10 @@
 // Renders the post creation menu
 export async function postCreationView() {
-    const app = document.getElementById('app');
+  const app = document.getElementById("app");
 
-    const section = document.createElement('section');
-    section.className = 'create-post hidden';
-    section.innerHTML = `
+  const section = document.createElement("section");
+  section.className = "create-post hidden";
+  section.innerHTML = `
         <h2>Create a New Post</h2>
         <form
           name="upload"
@@ -79,6 +79,6 @@ export async function postCreationView() {
             <button style="color: white;" type="submit">Post</button>
           </div>
         </form>
-    `
-    app.appendChild(section);
+    `;
+  app.appendChild(section);
 }
