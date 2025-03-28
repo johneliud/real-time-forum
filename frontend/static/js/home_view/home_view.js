@@ -1,11 +1,23 @@
+import { categoriesView } from "./categories.js";
+import { postCreationView } from "./post_creation.js";
+import { createPostBtn } from "./create_post_btn.js";
+import { postContainer } from "./post_container.js";
+
 // Renders the home view of the application.
 export async function homeView() {
-  const app = document.getElementById('app');
+  const app = document.getElementById("app");
 
-  // Set the inner HTML of the app element to display the home view content
-  app.innerHTML = `
-      <div class="home-container">
-          <h1>Welcome to Real Time Forum</h1>
-      </div>
-  `;
+  const aside = document.createElement("aside");
+  aside.id = "sidebar";
+  aside.className = "sidebar";
+
+  app.parentNode.insertBefore(aside, app);
+
+  categoriesView();
+
+  postCreationView();
+
+  createPostBtn();
+
+  postContainer();
 }

@@ -6,7 +6,7 @@
   --utility-color: #ff9e00;
   --tertiary-color: #ff6d00;
 
-  --dark-bg-color: #000000;
+  --bg-color: #000000;
   --text-color: #ffffff;
 
   --transition: 0.5s ease-in-out;
@@ -22,15 +22,24 @@
   font-family: 'League Spartan', sans-serif;
 }
 
+html {
+  height: 100%;
+}
+
 body {
   background-color: var(--text-color);
-  color: var(--dark-bg-color);
+  color: var(--bg-color);
   transition: var(--transition);
   height: 100vh;
+  padding-top: 85px;
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  grid-template-rows: auto 1fr;
+  gap: 1rem;
 }
 
 body.dark-theme {
-  background-color: var(--dark-bg-color);
+  background-color: var(--bg-color);
   color: var(--text-color);
 }
 
@@ -55,7 +64,7 @@ nav {
 }
 
 body.dark-theme .navbar {
-  background-color: var(--dark-bg-color);
+  background-color: var(--bg-color);
   box-shadow: var(--dark-box-shadow);
 }
 
@@ -70,13 +79,15 @@ body.dark-theme .logo a {
   color: var(--text-color);
 }
 
-.theme-toggler box-icon {
-  fill: var(--dark-bg-color);
+.theme-toggler img {
+  fill: var(--bg-color);
 }
 
-body.dark-theme .theme-toggler box-icon,
-body.dark-theme .menu-content box-icon {
+body.dark-theme .theme-toggler img,
+body.dark-theme .menu-content img {
   fill: var(--text-color);
+  filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(0deg)
+    brightness(100%) contrast(100%);
 }
 
 .theme-toggler .sun {
@@ -108,7 +119,7 @@ body.dark-theme .moon {
   left: 50%;
   transform: translateX(-50%);
   font-size: 0.75rem;
-  background-color: var(--dark-bg-color);
+  background-color: var(--bg-color);
   color: var(--text-color);
   padding: 0.25rem 0.5rem;
   border-radius: 2rem;
@@ -120,7 +131,7 @@ body.dark-theme .moon {
 
 body.dark-theme .tooltip-text {
   background-color: var(--text-color);
-  color: var(--dark-bg-color);
+  color: var(--bg-color);
 }
 
 .menu-content div {
@@ -137,14 +148,535 @@ body.dark-theme .tooltip-text {
   opacity: 1;
 }
 
-main {
-  width: 100%;
+.sidebar {
+  padding: 1.5rem;
+  background-color: var(--text-color);
+  box-shadow: var(--light-box-shadow);
+  border-radius: 8px;
+  height: calc(100vh - 80px);
+  transition: var(--transition);
+}
+
+body.dark-theme .sidebar {
+  background-color: var(--bg-color);
+  box-shadow: var(--dark-box-shadow);
+}
+
+.sidebar h2 {
+  font-size: 1.25rem;
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+
+.filter-form {
   display: flex;
   flex-direction: column;
+  row-gap: 1rem;
+}
+
+fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  row-gap: 0.5rem;
+  font-size: 1rem;
+}
+
+body.dark-theme label {
+  color: var(--text-color);
+}
+
+label input[type='checkbox'] {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--primary-color);
+  border-radius: 4px;
+  position: relative;
+  cursor: pointer;
+}
+
+body.dark-theme input[type='checkbox'] {
+  border-color: var(--text-color);
+}
+
+input[type='checkbox']:checked {
+  background-color: var(--primary-color);
+}
+
+body.dark-theme input[type='checkbox']:checked {
+  background-color: var(--text-color);
+}
+
+.sidebar-links {
+  list-style: none;
+  margin-top: 1rem;
+  padding: 0;
+}
+
+.sidebar-links li {
+  margin-bottom: 0.75rem;
+}
+
+.sidebar-links a {
+  text-decoration: none;
+  color: var(--text-color);
+  font-weight: bold;
+  transition: var(--transition);
+}
+
+body.dark-theme .sidebar-links a {
+  color: var(--text-color);
+}
+
+.sidebar-links a:hover,
+body.dark-theme .sidebar-links a:hover {
+  opacity: 0.8;
+}
+
+.sidebar-links li button {
+  background-color: var(--primary-color) !important;
+}
+
+.create-post {
+  padding: 1rem;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1rem;
+  transition: var(--transition);
+}
+
+.create-post.hidden {
+  display: none;
+}
+
+.create-post h2 {
+  font-size: 1.5rem;
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+
+body.dark-theme .create-post h2 {
+  color: var(--text-color);
+}
+
+.create-post form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.create-post form label {
+  font-weight: bold;
+  color: var(--secondary-color);
+}
+
+body.dark-theme .create-post form label {
+  color: var(--text-color);
+}
+
+.create-post form input[type='text'],
+.create-post form textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  outline: 0;
+}
+
+.create-post form textarea {
+  resize: none;
+  height: 120px;
+  outline: 0;
+}
+
+.create-post form .categories {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 1rem;
+  padding: 0.5rem;
+}
+
+.category-div {
+  display: flex;
+  align-items: center;
+  column-gap: 5px;
+  flex-wrap: wrap;
+}
+
+.create-post form .categories label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--primary-color);
+}
+
+.create-post form .categories input[type='checkbox'] {
+  accent-color: var(--secondary-color);
+}
+
+.create-post form button {
+  align-self: flex-start;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--primary-color);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: var(--transition);
+}
+
+.create-post form button:hover {
+  background-color: var(--secondary-color);
+}
+
+.floating-create-post-btn-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.floating-create-post-btn-container p {
+  position: absolute;
+  right: 100%;
+  top: -35px;
+  margin-right: 60px;
+  background-color: var(--primary-color);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 14px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.floating-create-post-btn-container:hover p {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.floating-create-post-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--primary-color);
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 1.5rem;
+  cursor: pointer;
+  box-shadow: var(--light-box-shadow);
+}
+
+.floating-create-post-btn img {
+  height: 100px;
+  width: 1.2rem;
+  filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(0deg)
+    brightness(100%) contrast(100%);
+}
+
+body.dark-theme .floating-create-post-btn {
+  box-shadow: var(--dark-box-shadow);
+}
+
+.floating-create-post-btn i {
+  pointer-events: none;
+}
+
+.posts {
+  overflow-y: auto;
+}
+
+.post-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  border-bottom: 0.5px solid var(--bg-color);
+  font-size: 0.9rem;
+  color: #666;
+}
+
+body.dark-theme .post-header {
+  color: var(--text-color);
+  border-bottom: 0.5px solid var(--text-color);
+}
+
+.post-author,
+.post-time {
+  font-weight: 300;
+}
+
+.post {
+  background-color: #f9f9f9;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  transition: var(--transition);
+}
+
+body.dark-theme .post {
+  background-color: var(--neutral-color);
+}
+
+.uploaded-file {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  aspect-ratio: 16/9;
+}
+
+.post h3 {
+  font-size: 1.25rem;
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+}
+
+body.dark-theme .post h3 {
+  color: var(--text-color);
+}
+
+.post p {
+  color: #333;
+  line-height: 1.5;
+}
+
+body.dark-theme .post p {
+  color: var(--text-color);
+}
+
+.post-category span {
+  font-size: 0.9rem;
+  background-color: var(--secondary-color);
+  color: var(--text-color);
+  padding: 0.25rem 0.5rem;
+  margin: 0.5rem 0;
+  border-radius: 8px;
+}
+
+.post-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+}
+
+body.dark-theme .post-actions span,
+body.dark-theme .comment-actions span {
+  color: #f9f9f9;
+}
+
+.post-operations {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.post-actions button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--primary-color);
+  font-size: 1rem;
+  transition: var(--transition);
+}
+
+.post-actions button.active {
+  color: var(--utility-color);
+}
+
+.session-status {
+  font-size: 1rem;
+  color: var(--utility-color);
+  font-weight: bold;
+}
+
+body.dark-theme .session-status {
+  color: var(--tertiary-color);
+}
+
+.logout-button {
+  padding: 0.5rem 1rem;
+  margin: 0.5rem 0;
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--text-color);
+  background-color: var(--secondary-color);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.logout-button:hover {
+  background-color: var(--primary-color);
+}
+
+body.dark-theme .logout-button:hover {
+  background-color: var(--tertiary-color);
+}
+
+.comments-section {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  display: none;
+  transition: var(--transition);
+}
+
+body.dark-theme .comments-section {
+  background-color: var(--neutral-color);
+  border: 1px solid var(--border-color);
+}
+
+.comments-section h4 {
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+  color: var(--primary-color);
+}
+
+body.dark-theme .comments-section h4 {
+  color: var(--text-color);
+}
+
+.comment {
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  color: #333;
+  padding: 0.5rem;
+  border-radius: 8px;
+  background: var(--text-color);
+  border: 1px solid #ddd;
+}
+
+body.dark-theme .comment {
+  background-color: var(--neutral-color);
+}
+
+body.dark-theme .comment p {
+  color: var(--text-color);
+}
+
+.comment-input {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.comment-input form {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  column-gap: 1rem;
+}
+
+.comment-box {
   flex: 1;
-  padding-top: 100px;
+  padding: 0.5rem;
+  border: 1px solid var(--primary-color);
+  border-radius: 4px;
+  outline: none;
+  font-size: 1rem;
+  transition: var(--transition);
+}
+
+body.dark-theme .comment-box {
+  background-color: var(--neutral-color);
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+}
+
+.submit-comment {
+  background-color: var(--primary-color);
+  color: var(--text-color);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.submit-comment img {
+  filter: invert(91%) sepia(9%) saturate(0%) hue-rotate(0deg) brightness(107%)
+    contrast(85%);
+}
+
+.submit-comment:hover {
+  background-color: var(--secondary-color);
+}
+
+.comment-actions {
+  width: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.comment-actions button {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--secondary-color);
+  font-size: 0.9rem;
+}
+
+.comment-actions button span {
+  margin-top: 5px;
+}
+
+.apply,
+.filter-form button {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  margin: 0.5rem 0;
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--text-color);
+  background-color: var(--primary-color);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.filter-form .sidebar-links {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  column-gap: 1rem;
+}
+
+.filter-form .sidebar-links button {
+  background-color: var(--secondary-color);
 }
 
 /* Profile Modal Styling */
@@ -164,7 +696,7 @@ main {
 
 .profile-modal .modal-content {
   background-color: var(--text-color);
-  color: var(--dark-bg-color);
+  color: var(--bg-color);
   padding: 25px;
   border-radius: 8px;
   width: 90%;
@@ -202,7 +734,7 @@ main {
 
 .profile-details p {
   margin: 10px 0;
-  color: var(--dark-bg-color);
+  color: var(--bg-color);
   font-size: 16px;
 }
 
@@ -265,7 +797,7 @@ main {
 
 /* Dark mode support */
 body.dark-mode .profile-modal .modal-content {
-  background-color: var(--dark-bg-color);
+  background-color: var(--bg-color);
   color: var(--text-color);
   box-shadow: var(--dark-box-shadow);
 }
