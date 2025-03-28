@@ -31,7 +31,7 @@ func executeSchema(DB *sql.DB) error {
 func InitDB() {
 	var err error
 
-	DB, err = sql.Open("sqlite3", "data/real_time_forum.db")
+	DB, err = sql.Open("sqlite3", "files/real_time_forum.db")
 	if err != nil {
 		logger.Error("Failed to open database", "err", err)
 		return
