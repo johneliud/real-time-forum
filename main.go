@@ -15,9 +15,9 @@ import (
 func main() {
 	var err error
 
-	_ = os.Mkdir("data", 0o700)
+	_ = os.Mkdir("files", 0o700)
 
-	err = logger.NewLogger("data/app.log", slog.LevelDebug)
+	err = logger.NewLogger("files/app.log", slog.LevelDebug)
 	if err != nil {
 		panic(err)
 	}
