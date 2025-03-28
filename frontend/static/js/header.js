@@ -17,55 +17,55 @@ export async function renderHeader(router) {
             ? `
         <div class="user-profile">
           <span class="tooltip-text">Profile</span>
-          <box-icon name='user-circle'></box-icon>
+          <img src="frontend/static/assets/user-circle-regular-24.png" alt="User Profile" />
         </div>
 
         <div class="inbox">
           <span class="tooltip-text">Inbox</span>
-          <box-icon name='envelope'></box-icon>
+          <img src="frontend/static/assets/envelope-regular-24.png" alt="Inbox" />
         </div>
 
         <div class="settings">
           <span class="tooltip-text">Settings</span>
-          <box-icon name='cog'></box-icon>
+          <img src="frontend/static/assets/cog-regular-24.png" alt="Settings" />
         </div>
         
         <div class="log-out" id="logout-btn">
           <span class="tooltip-text">Log Out</span>
-          <box-icon name='log-out'></box-icon>
+          <img src="frontend/static/assets/log-out-regular-24.png" alt="Log Out" />
         </div>
 
         <div class="theme-toggler">
           <span class="tooltip-text">Toggle Theme</span>
-          <box-icon class="sun" name="sun"></box-icon>
-          <box-icon class="moon" name="moon"></box-icon>
+          <img class="sun" src="frontend/static/assets/sun-regular-24.png" alt="Toggle Theme" />
+          <img class="moon" src="frontend/static/assets/moon-regular-24.png" alt="Toggle Theme" />
         </div>
         `
             : `
         <div style="visibility: none; opacity: 0;" class="user-profile">
           <span class="tooltip-text">Profile</span>
-          <box-icon name='user-circle'></box-icon>
+          <img src="frontend/static/assets/user-circle-regular-24.png" alt="User Profile" />
         </div>
 
         <div style="visibility: none; opacity: 0;" class="inbox">
           <span class="tooltip-text">Inbox</span>
-          <box-icon name='envelope'></box-icon>
+          <img src="frontend/static/assets/envelope-regular-24.png" alt="Inbox" />
         </div>
 
         <div style="visibility: none; opacity: 0;" class="settings">
           <span class="tooltip-text">Settings</span>
-          <box-icon name='cog'></box-icon>
+          <img src="frontend/static/assets/cog-regular-24.png" alt="Settings" />
         </div>
         
         <div style="visibility: none; opacity: 0;" class="log-out" id="logout-btn">
           <span class="tooltip-text">Log Out</span>
-          <box-icon name='log-out'></box-icon>
+          <img src="frontend/static/assets/log-out-regular-24.png" alt="Log Out" />
         </div>
 
         <div class="theme-toggler">
           <span class="tooltip-text">Toggle Theme</span>
-          <box-icon class="sun" name="sun"></box-icon>
-          <box-icon class="moon" name="moon"></box-icon>
+          <img class="sun" src="frontend/static/assets/sun-regular-24.png" alt="Toggle Theme" />
+          <img class="moon" src="frontend/static/assets/moon-regular-24.png" alt="Toggle Theme" />
         </div>
             `
         }
